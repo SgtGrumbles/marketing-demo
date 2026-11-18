@@ -54,6 +54,7 @@
 /*
  * Neutral zinc base with one blue-teal accent (--primary).
  * Color is reserved for data: --chart-1 … --chart-6 map to channels in lib/channels.ts.
+ * Chart slots are a CVD-validated categorical palette; keep their order (adjacent pairs were checked).
  */
 :root {
     --background: oklch(1 0 0);
@@ -76,12 +77,12 @@
     --border: oklch(0.92 0.004 286.32);
     --input: oklch(0.92 0.004 286.32);
     --ring: oklch(0.52 0.105 215);
-    --chart-1: oklch(0.55 0.13 250);
-    --chart-2: oklch(0.7 0.15 55);
-    --chart-3: oklch(0.6 0.11 185);
-    --chart-4: oklch(0.55 0.17 305);
-    --chart-5: oklch(0.78 0.14 95);
-    --chart-6: oklch(0.6 0.17 10);
+    --chart-1: #2a78d6;
+    --chart-2: #eb6834;
+    --chart-3: #1baf7a;
+    --chart-4: #eda100;
+    --chart-5: #e87ba4;
+    --chart-6: #008300;
     --radius: 0.5rem;
     --sidebar: oklch(0.985 0 0);
     --sidebar-foreground: oklch(0.141 0.005 285.823);
@@ -114,12 +115,12 @@
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.74 0.11 210);
-    --chart-1: oklch(0.7 0.13 250);
-    --chart-2: oklch(0.78 0.14 60);
-    --chart-3: oklch(0.74 0.11 185);
-    --chart-4: oklch(0.7 0.15 305);
-    --chart-5: oklch(0.85 0.13 95);
-    --chart-6: oklch(0.7 0.16 10);
+    --chart-1: #3987e5;
+    --chart-2: #d95926;
+    --chart-3: #199e70;
+    --chart-4: #c98500;
+    --chart-5: #d55181;
+    --chart-6: #008300;
     --sidebar: oklch(0.18 0.006 285.885);
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.74 0.11 210);

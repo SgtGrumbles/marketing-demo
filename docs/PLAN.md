@@ -12,11 +12,11 @@ Work one milestone at a time. Every milestone ends with typecheck and build pass
 **Done when:** every route navigates, the theme toggle works, and the build passes.
 
 ## M1 — Data generator
-- [ ] data/types.ts, data/config.ts, data/prng.ts
-- [ ] data/generate.ts implementing DATA.md, including seasonality and all six storylines
-- [ ] lib/metrics.ts and lib/format.ts, with Vitest tests for formulas and formatting
-- [ ] lib/channels.ts with channel metadata and colors
-- [ ] `npm run data:check`: prints totals by channel and month and verifies funnel monotonicity and ROAS ranges
+- [x] data/types.ts, data/config.ts, data/prng.ts
+- [x] data/generate.ts implementing DATA.md, including seasonality and all six storylines
+- [x] lib/metrics.ts and lib/format.ts, with Vitest tests for formulas and formatting
+- [x] lib/channels.ts with channel metadata and colors
+- [x] `npm run data:check`: prints totals by channel and month and verifies funnel monotonicity and ROAS ranges
 
 **Done when:** data:check passes, totals look plausible, and generation takes under 200 ms.
 
