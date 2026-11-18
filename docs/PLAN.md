@@ -74,7 +74,7 @@ Work one milestone at a time. Every milestone ends with typecheck and build pass
 - [x] Accessibility pass: keyboard navigation, focus states, contrast
 
 ## M10 — Ship
-- [ ] Static build deployed (Vercel, Netlify or GitHub Pages)
+- [x] Static build deployed (Vercel, Netlify or GitHub Pages)
 - [ ] Runs fully offline via `npm run preview`
 - [ ] Zero console errors or warnings
 - [ ] Dry run on the presentation laptop and projector

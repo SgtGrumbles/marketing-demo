@@ -325,3 +325,19 @@ After each milestone, Claude Code appends an entry using the template below, wit
   - **Overflow:** the Channels page at 1280 overflowed by 20 px once its content moved into the tab panel. The root cause was the inset's `min-width: auto`.
   - **Test script:** the screenshot loop was run under zsh, which doesn't word-split variables, so it got no paths. Rerun with bash.
 - **Screenshots:** screenshots/m9-palette.png, screenshots/m9-empty.png, screenshots/m9-skeleton.png
+
+### M10 — Ship (in progress)
+- **Deploy:** 2026-11-18 ~12:40 – 13:06 MST
+- **Prompt(s):** "I assume I could start with Github pages…", "yes. name: \"marketing-demo\"", "I just did it. I should be logged in and good to go"
+- **Live at https://sgtgrumbles.github.io/marketing-demo/** (public repo SgtGrumbles/marketing-demo).
+  - **Chosen for now:** GitHub Pages. Its free tier has no login protection, and the repo must be public. Cloudflare Pages + Access (free for up to 50 users, email one-time codes) is the option if access control is needed later.
+- **What was built:**
+  - `.github/workflows/deploy.yml`: on push to `main`, `npm ci`, lint, test, `data:check`, build with `BASE_PATH=/<repo>/`, copy `index.html` → `404.html` (GitHub Pages has no SPA fallback), upload and deploy.
+  - Vite `base` comes from `BASE_PATH` (default `/`), and the router's `basename` from `import.meta.env.BASE_URL`, so local dev and preview still run at `/`.
+  - A `noindex, nofollow` robots tag.
+  - Commit author emails were rewritten to the GitHub no-reply address before the first push; the repo's git config now uses it.
+- **Verification:**
+  - Before pushing, a local server mimicking GitHub Pages (prefix + 404 fallback): 9/9 checks.
+  - The same check against the live URL: 9/9. Deep links, sidebar, drill-down, insight links, unknown paths, favicon, zero console errors.
+  - Both workflow runs succeeded.
+- **Iterations / corrections:** the first run warned that the v3/v4 actions target the deprecated Node 20, so they were bumped to the current majors (checkout v7, setup-node v7, upload-pages-artifact v5, deploy-pages v5).
