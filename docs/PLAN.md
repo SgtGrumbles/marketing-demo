@@ -47,9 +47,9 @@ Work one milestone at a time. Every milestone ends with typecheck and build pass
 - [x] By-channel comparison and biggest-drop-off callout
 
 ## M6 — Insights
-- [ ] lib/insights.ts with the six rule types
-- [ ] Insights page plus the Overview preview wired up
-- [ ] Each "View" link opens the right page with the right filters
+- [x] lib/insights.ts with the six rule types
+- [x] Insights page plus the Overview preview wired up
+- [x] Each "View" link opens the right page with the right filters
 
 **Done when:** all six planted storylines appear as insights with correct numbers.
 

@@ -193,3 +193,39 @@ After each milestone, Claude Code appends an entry using the template below, wit
   - Value labels in the small multiples were struck through by the blended-rate rule. Recharts 3 draws ReferenceLine (z-index 400) above bars (300) whatever the JSX order, so the rule is now `zIndex={250}`, and labels get a card-colored halo (`paint-order: stroke`) that breaks the line around the text.
   - A scratch inspection command had a stray `cat > /tmp/x.ts` with no input and hung. My attempt to clear it with `pkill -f cat` was rightly blocked as too broad; stopped the specific background task instead and removed the empty file it created.
 - **Screenshot:** screenshots/m5.png, screenshots/m5-dark.png
+
+### M6 — Insights
+- **Start / end:** 2026-11-18 00:24 – 00:32 MST (about 8 min)
+- **Prompt(s):** "m6, go"
+- **What was built:**
+  - **`lib/insights.ts`:** types, `detectInsights` (ranked by severity then score) and `insightHref` (View URLs laid over the current filters).
+  - **`lib/insight-rules.ts`:** the six rules.
+  - **`lib/insight-signals.ts`:** day-level signals computed once per dataset.
+  - **Rules:**
+    - **Tracking gap:** clicks ≥70% of the prior week while orders ≤25%.
+    - **Anomaly:** a channel's revenue as a share of the rest of the business, against its same-weekday median of the prior 4 weeks (log residual), z-scored against the trailing 28 days. Flags at |z| ≥ 3 and ≥50% moves, keeping the strongest per channel.
+    - **Trend:** a 21-day least-squares fit for spend and revenue, plus per-channel ROAS comparing the first and last week from sums.
+    - **Creative fatigue:** reuses the M4 `fatigueSignal`.
+    - **Pacing:** over 110% of plan.
+    - **Efficiency leader:** best ROAS among the selected paid social channels.
+  - **Insights page:** a type filter with counts, and cards with a severity badge (icon + label), title, one-sentence body with real numbers, mini chart (series with the key day marked, a plan or trend line, or ROAS bars) and a View link.
+  - **Overview:** the preview shows the top 3, with "View all".
+  - Holiday names in `data/calendar.ts`, `formatDecimal`, and a shared `lib/memo.ts` (`memoByDataset`, `memoizeLast`).
+- **All six storylines detected, last 30 days. The page shows exactly 7 insights (6 storylines + the revenue/spend trend pair):**
+  1. Video 03 frequency 1.9 → 4.5, CTR −39.9%, CPA +34.4%
+  2. TikTok 3.7x vs Meta 3.1x on 22.4% of paid social spend
+  3. Paid Search Nov 26: clicks 116.6% of normal, orders 58 (11.8%)
+  4. Email $9,457 on Cyber Monday, 3.5× its 28-day average
+  5. Spend +26.7% and revenue +35.9% over three weeks, through the Black Friday–Cyber Monday peak
+  6. `search_conv_shopping` at 115.0% of plan, projected $114,359 vs a $99,400 budget
+  - The engine runs in about 10 ms.
+- **Verification:**
+  - 10 new unit tests (64 total) assert each storyline's numbers, that nothing else fires, warnings-first ordering, channel filtering and exact View URLs.
+  - Headless Chrome, 13/13 checks: every View link followed to the right page with the right filters (custom ranges around events; the drawer opens for fatigue and pacing), the type filter, the channel filter narrowing insights, View keeping the current filters, and the Overview top 3 matching the page. Both themes at 1920 and 1280, zero console errors.
+- **Files changed:** `src/lib/{insights,insight-rules,insight-signals,memo}.ts` with tests, `src/lib/{campaigns,format}.ts`, `src/data/calendar.ts`, `src/store/{use-insights,use-filtered-data}.ts`, `src/components/insights/*`, `src/components/overview/{insights-preview,spend-revenue-chart}.tsx`, `src/pages/insights.tsx`.
+- **Iterations / corrections:**
+  - **Anomaly model:** a plain z-score of daily revenue against the trailing 28 days was useless. The November ramp flagged ~90 channel-days, and the Cyber Monday email promo scored only z=2.6 because Tuesday/Thursday sends make email noisy. Normalizing to share-of-rest-of-business (cancels seasonality) with a same-weekday baseline (cancels send days) flags 17 of 2,904 channel-days across the whole history, all real events: promo sends, TikTok's launch, the affiliate creators launch.
+  - **Outage spillover:** on Nov 26 the search outage shrank total revenue, so every other channel's share "spiked". Excluding search from the denominator made it worse (it's the biggest channel). It's now imputed at its prior-week average on gap days, which removed all four false anomalies.
+  - Reworded the anomaly text from "far outside its normal range" (odd next to "1.2x") to "an unusual move against the rest of the business".
+  - The Overview preview made the insights column taller than the trend chart. Preview cards now clamp to two lines, and the chart grows to fill the row.
+- **Screenshot:** screenshots/m6.png (Insights), screenshots/m6-overview.png

@@ -7,6 +7,7 @@ import {
   formatDateRange,
   formatDateTooltip,
   formatPeriod,
+  formatDecimal,
   formatDelta,
   formatMultiplier,
   formatPercent,
@@ -38,6 +39,8 @@ describe('format', () => {
     expect(formatDelta(0.124)).toBe('+12.4%')
     expect(formatDelta(-0.031)).toBe('−3.1%')
     expect(formatDelta(0.00001)).toBe('0.0%')
+    expect(formatDecimal(-3.08)).toBe('−3.1')
+    expect(formatDecimal(13.14)).toBe('13.1')
   })
 
   it('dates', () => {

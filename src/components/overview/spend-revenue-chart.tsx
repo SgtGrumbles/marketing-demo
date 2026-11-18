@@ -25,7 +25,7 @@ export function SpendRevenueChart() {
   const fillId = `revenue-fill-${useId().replace(/:/g, '')}`
 
   return (
-    <Card className="gap-4">
+    <Card className="h-full gap-4">
       <CardHeader>
         <CardTitle>Spend vs. revenue</CardTitle>
         <CardDescription>{formatDateRange(range.from, range.to)}</CardDescription>
@@ -43,13 +43,13 @@ export function SpendRevenueChart() {
           </ToggleGroup>
         </CardAction>
       </CardHeader>
-      <CardContent className="grid gap-3">
+      <CardContent className="flex flex-1 flex-col gap-3">
         <div className="flex flex-wrap gap-x-5 gap-y-1">
           <LegendItem label="Revenue" color={SERIES_COLORS.revenue} />
           <LegendItem label="Spend" color={SERIES_COLORS.spend} />
           {showPrevious && <LegendItem label="Previous period" color="var(--muted-foreground)" dashed />}
         </div>
-        <ChartContainer config={config} className="aspect-auto h-72 w-full" aria-label="Spend and revenue over time">
+        <ChartContainer config={config} className="aspect-auto min-h-72 w-full flex-1" aria-label="Spend and revenue over time">
           <ComposedChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
             <defs>
               <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">

@@ -2,6 +2,7 @@ import { getDaysInMonth, parseISO, subDays } from 'date-fns'
 import { toISODate } from '@/data/calendar'
 import type { Campaign, ChannelKey, DailyFact, Dataset } from '@/data/types'
 import { dailySeries, totalsByCampaign } from '@/lib/aggregate'
+import { memoByDataset } from '@/lib/memo'
 import { budgetPacing, METRICS, ratio, sumTotals, type Totals } from '@/lib/metrics'
 
 export interface Pacing {
@@ -15,6 +16,8 @@ export interface Pacing {
   pacing: number | null
   /** Month-end spend at the current daily rate. */
   projected: number
+  elapsedDays: number
+  daysInMonth: number
 }
 
 export type PacingTone = 'over' | 'under' | 'on-track'
@@ -25,20 +28,8 @@ export function pacingTone(pacing: number | null): PacingTone {
   return pacing > 1.1 ? 'over' : pacing < 0.9 ? 'under' : 'on-track'
 }
 
-const memo = <T,>(build: (data: Dataset) => T) => {
-  const cache = new WeakMap<Dataset, T>()
-  return (data: Dataset): T => {
-    let value = cache.get(data)
-    if (value === undefined) {
-      value = build(data)
-      cache.set(data, value)
-    }
-    return value
-  }
-}
-
 /** Month-to-date budget pacing for every campaign with a budget, as of the last day of data. */
-export const pacingByCampaign = memo((data: Dataset): Map<string, Pacing> => {
+export const pacingByCampaign = memoByDataset((data: Dataset): Map<string, Pacing> => {
   const lastDay = parseISO(data.endDate)
   const elapsed = lastDay.getDate()
   const daysInMonth = getDaysInMonth(lastDay)
@@ -56,13 +47,15 @@ export const pacingByCampaign = memo((data: Dataset): Map<string, Pacing> => {
       usedShare: ratio(spent, campaign.monthlyBudget) ?? 0,
       pacing: budgetPacing(spent, campaign.monthlyBudget, elapsed, daysInMonth),
       projected: (spent / elapsed) * daysInMonth,
+      elapsedDays: elapsed,
+      daysInMonth,
     })
   }
   return result
 })
 
 /** Daily spend for the last 30 days of data, per campaign (fixed window, independent of filters). */
-export const recentSpendByCampaign = memo((data: Dataset): Map<string, { date: string; value: number }[]> => {
+export const recentSpendByCampaign = memoByDataset((data: Dataset): Map<string, { date: string; value: number }[]> => {
   const range = { from: toISODate(subDays(parseISO(data.endDate), 29)), to: data.endDate }
   const recent = new Map<string, DailyFact[]>()
   for (const fact of data.facts) {

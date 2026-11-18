@@ -4,6 +4,7 @@ import { filterFacts } from '@/lib/aggregate'
 import { dataBounds, previousRange, resolveRange, type DateRange, type PreviousRange } from '@/lib/date-range'
 import type { Filters } from '@/lib/filter-params'
 import { sumTotals, type Totals } from '@/lib/metrics'
+import { memoizeLast } from '@/lib/memo'
 import { useFilterStore } from './filters'
 
 export interface FilteredData {
@@ -26,15 +27,6 @@ export function selectFilteredData(filters: Filters, data: Dataset = getDataset(
   const facts = filterFacts(data.facts, range, filters.channels)
   const previousFacts = filterFacts(data.facts, previous, filters.channels)
   return { data, filters, range, previous, facts, previousFacts, totals: sumTotals(facts), previousTotals: sumTotals(previousFacts) }
-}
-
-/** Remembers the last result, like reselect, so every component reading the same filters shares one computation. */
-function memoizeLast<A, R>(compute: (arg: A) => R): (arg: A) => R {
-  let last: { arg: A; result: R } | undefined
-  return (arg) => {
-    if (!last || last.arg !== arg) last = { arg, result: compute(arg) }
-    return last.result
-  }
 }
 
 const selectCurrent = memoizeLast((filters: Filters) => selectFilteredData(filters))

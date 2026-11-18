@@ -55,6 +55,13 @@ export function formatCountCompact(value: Value): string {
   return isMissing(value) ? MISSING : countCompact.format(value)
 }
 
+/** 4.2 → "4.2", −3.08 → "−3.1" (true minus) */
+export function formatDecimal(value: Value, digits = 1): string {
+  if (isMissing(value)) return MISSING
+  const text = Math.abs(value).toFixed(digits)
+  return value < 0 && Number(text) !== 0 ? `${MINUS}${text}` : text
+}
+
 /** 0.124 → +12.4%, −0.031 → −3.1% */
 export function formatDelta(value: Value): string {
   if (isMissing(value)) return MISSING

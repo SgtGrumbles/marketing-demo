@@ -20,16 +20,26 @@ export function blackFriday(year: number): Date {
   return addDays(nthWeekday(year, 10, 4, 4), 1)
 }
 
-/** US retail sale days that get an email promo blast. */
-export function promoDays(year: number): Date[] {
+/** US retail sale days, which get an email promo blast. */
+export function retailHolidays(year: number): { date: Date; name: string }[] {
   const bf = blackFriday(year)
   return [
-    nthWeekday(year, 4, 1, -1), // Memorial Day
-    new Date(year, 6, 4), // Independence Day
-    nthWeekday(year, 8, 1, 1), // Labor Day
-    bf,
-    addDays(bf, 3), // Cyber Monday
+    { date: nthWeekday(year, 4, 1, -1), name: 'Memorial Day' },
+    { date: new Date(year, 6, 4), name: 'Independence Day' },
+    { date: nthWeekday(year, 8, 1, 1), name: 'Labor Day' },
+    { date: bf, name: 'Black Friday' },
+    { date: addDays(bf, 3), name: 'Cyber Monday' },
   ]
+}
+
+export function promoDays(year: number): Date[] {
+  return retailHolidays(year).map((holiday) => holiday.date)
+}
+
+/** "Cyber Monday" for 2025-12-01, or undefined. */
+export function holidayName(isoDate: string): string | undefined {
+  const year = Number(isoDate.slice(0, 4))
+  return retailHolidays(year).find((holiday) => toISODate(holiday.date) === isoDate)?.name
 }
 
 const lerp = (from: number, to: number, t: number) => from + (to - from) * Math.min(1, Math.max(0, t))
