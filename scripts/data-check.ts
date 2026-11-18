@@ -8,6 +8,7 @@ import type { ChannelKey, DailyFact } from '@/data/types'
 import { CHANNEL_LIST } from '@/lib/channels'
 import { formatCount, formatCurrency, formatCurrencyCompact, formatDelta, formatMultiplier, formatPercent, formatUnitCost } from '@/lib/format'
 import { budgetPacing, cpa, ctr, cvr, mer, percentChange, ratio, roas, sumTotals } from '@/lib/metrics'
+import { allocationTotal, curveRevenue, optimizeAllocation, PLANNER_CHANNELS, plannerBaseline, projectPlan } from '@/lib/planner'
 
 // --- generate and time -------------------------------------------------------------------------
 let start = performance.now()
@@ -219,6 +220,19 @@ const pacing = data.campaigns
 const hot = pacing.find((p) => p.id === STORYLINES.overBudget.campaignId)
 const othersOk = pacing.filter((p) => p !== hot).every((p) => within(p.pacing, 0.8, 1.06))
 check('S6 Over-budget campaign', within(hot?.pacing ?? null, 1.13, 1.17) && othersOk, `${hot?.id} at ${formatPercent(hot?.pacing)}; ${pacing.length - 1} others within 80–106%`)
+
+// Budget planner: curves pass through the last 30 days; Optimize moves Meta budget toward TikTok
+const planner = plannerBaseline(data)
+const curveMisses = PLANNER_CHANNELS.filter((c) => Math.abs(curveRevenue(planner.curves[c], planner.curves[c].current.spend) - planner.curves[c].current.revenue) > 1)
+check('Planner curves reproduce last 30 days', curveMisses.length === 0, `${PLANNER_CHANNELS.length - curveMisses.length} of ${PLANNER_CHANNELS.length} curves within $1`)
+const optimal = optimizeAllocation(planner, allocationTotal(planner.allocation))
+const moved = (c: (typeof PLANNER_CHANNELS)[number]) => optimal[c] - planner.allocation[c]
+const lift = percentChange(projectPlan(planner, optimal).total.revenue, projectPlan(planner, planner.allocation).total.revenue)
+check(
+  'Planner optimize: Meta → TikTok',
+  moved('tiktok') > 0 && moved('meta') < 0 && (lift ?? 0) > 0,
+  PLANNER_CHANNELS.map((c) => `${c} ${moved(c) >= 0 ? '+' : '−'}${formatCurrencyCompact(Math.abs(moved(c)))}`).join(', ') + `; revenue ${formatDelta(lift)}`,
+)
 
 console.log('\nChecks')
 for (const { name, pass, detail } of checks) console.log(`  ${pass ? 'PASS' : 'FAIL'}  ${name.padEnd(46)} ${detail}`)

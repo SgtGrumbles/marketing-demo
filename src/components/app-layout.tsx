@@ -12,7 +12,7 @@ import { useFilterUrlSync } from '@/store/use-filter-url-sync'
 export function AppLayout() {
   useFilterUrlSync()
   const { pathname } = useLocation()
-  const title = findNavItem(pathname)?.title ?? 'Pulse'
+  const page = findNavItem(pathname)
 
   return (
     <SidebarProvider>
@@ -21,8 +21,8 @@ export function AppLayout() {
         <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-3 border-b bg-background/90 px-4 backdrop-blur">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="h-5 data-vertical:self-center" />
-          <h1 className="mr-2 text-lg font-semibold tracking-tight whitespace-nowrap">{title}</h1>
-          <FilterBar />
+          <h1 className="mr-2 text-lg font-semibold tracking-tight whitespace-nowrap">{page?.title ?? 'Pulse'}</h1>
+          {page?.usesFilters !== false && <FilterBar />}
           <div className="ml-auto flex items-center gap-3">
             <SyncStatus />
             <ThemeToggle />

@@ -230,3 +230,15 @@ export const STORYLINES = {
   holidayPeak: { spendMultiple: 2.5, revenueMultiple: 3 },
   overBudget: { campaignId: 'search-shopping', pacing: 1.15 },
 } as const
+
+/**
+ * Budget planner response curves: monthly revenue = a × (1 − e^(−spend / b)). Each channel's
+ * shoulder is where its last-30-day spend sits on the curve (spend / b). The planner solves a and b
+ * from it so the curve passes through the actual last 30 days. A low shoulder means headroom
+ * (TikTok); a high one means saturation (Meta). Channels not listed stay fixed in the planner.
+ */
+export const PLANNER_CURVES = {
+  search: { shoulder: 1.1 },
+  meta: { shoulder: 1.6 },
+  tiktok: { shoulder: 0.45 },
+} as const satisfies Partial<Record<ChannelKey, { shoulder: number }>>

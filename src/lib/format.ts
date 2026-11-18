@@ -119,3 +119,13 @@ export function formatTimeAgo(from: Date, now: Date = new Date()): string {
   if (minutes < 60) return `${minutes} min ago`
   return `${Math.floor(minutes / 60)} hr ago`
 }
+
+/** Reads a typed amount: "$120,500", "120500", "120.5k" or "1.2m". Null when it isn't a number. */
+export function parseCurrencyInput(text: string): number | null {
+  const match = /^\$?\s*([\d,]*\.?\d+)\s*([km]?)$/i.exec(text.trim())
+  if (!match?.[1]) return null
+  const value = Number(match[1].replaceAll(',', ''))
+  const unit = match[2]?.toLowerCase()
+  const scaled = unit === 'k' ? value * 1_000 : unit === 'm' ? value * 1_000_000 : value
+  return Number.isFinite(scaled) ? Math.round(scaled) : null
+}

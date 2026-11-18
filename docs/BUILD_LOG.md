@@ -229,3 +229,29 @@ After each milestone, Claude Code appends an entry using the template below, wit
   - Reworded the anomaly text from "far outside its normal range" (odd next to "1.2x") to "an unusual move against the rest of the business".
   - The Overview preview made the insights column taller than the trend chart. Preview cards now clamp to two lines, and the chart grows to fill the row.
 - **Screenshot:** screenshots/m6.png (Insights), screenshots/m6-overview.png
+
+### M7 — Budget planner
+- **Start / end:** 2026-11-18 02:04 – 02:11 MST (about 10 min)
+- **Prompt(s):** "ok m7"
+- **What was built:**
+  - **Response curves:** `lib/planner.ts`, revenue = a × (1 − e^(−spend / b)) for Paid Search, Meta and TikTok.
+    - Hand-set "shoulders" live in `data/config.ts` (`PLANNER_CURVES`): spend / b at current spend is 1.1 for search, 1.6 for Meta (near saturation) and 0.45 for TikTok (most headroom).
+    - a and b are solved from the shoulder so each curve passes exactly through its last-30-day spend and revenue.
+    - Email and affiliate are held fixed. Organic is left out because it has no spend.
+  - **Projections:** revenue from the curve, orders = revenue / the channel's last-30-day AOV, ROAS from `lib/metrics`. Totals include the fixed channels. The current plan reproduces the actual last 30 days.
+  - **Rebalancing:** with "Lock total" on, a change is spread across the other channels in proportion to their budgets; a channel that hits its maximum is pinned and the rest re-split. Sliders run to 2.5× current spend.
+  - **Optimize:** greedy  increments to the best marginal return, under the same total. Sliders animate there over 700 ms with easing, and projections update every frame. Reduced motion jumps straight there. The button reads "Optimized" when the plan is already optimal.
+  - **UI:** `/planner` has a chip ("Projections from modeled response curves") and the baseline dates, four total tiles with deltas, a slider + typed-amount card (accepts "120.5k" and "1.2m"; Escape or invalid text reverts), a projection table per channel and in total, and a response-curve chart per channel with current (hollow) and proposed (filled) markers, marginal ROAS and saturation.
+  - Plan state lives in a Zustand store, so it survives navigating away and back.
+  - The top-bar filters are hidden on pages that ignore them (`usesFilters` on nav items: planner and data sources). Their URL params are kept.
+  - shadcn `Slider` added (uses the existing `radix-ui` package, so no new dependency). `lib/ticks.ts` gives round axis ticks.
+- **Result:** Optimize moves Meta $312.3K → $205.0K, TikTok $90.3K → $153.0K and Paid Search $251.9K → $296.5K for the same $669.7K. Marginal ROAS evens out at 2.2x on all three, and projected revenue rises 3.2% (+$86.7K), with orders up 3.5%.
+- **Verification:**
+  - 9 new unit tests (73 total): calibration, current plan = actuals, headroom order, lock-total rebalancing with pinning, lock off, optimizer direction and equal marginals, input parsing, ticks.
+  - `data:check` gains two planner checks.
+  - Headless Chrome, 15/15 checks with real mouse drags and typing: lock on keeps the total, lock off changes it, typed and invalid amounts, Reset, Optimize mid-animation and final values, table total matching the tiles, state surviving in-app navigation, filters hidden with the URL kept, no overflow at 1280. Both themes at 1920 and 1280, zero console errors.
+- **Iterations / corrections:**
+  - One test wrongly expected a slider to reach the full total; Search's max ($630K) is below it, so the cap is correct.
+  - The first browser run reloaded the page to test persistence (in-memory state is meant to reset on reload). It now navigates in-app.
+  - Recharts' automatic axis ticks ended on odd values ($600K, $790K crowding); switched to round-number ticks.
+- **Screenshots:** screenshots/m7.png (optimized plan with curve tooltip), screenshots/m7-dark.png

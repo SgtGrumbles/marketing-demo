@@ -54,10 +54,10 @@ Work one milestone at a time. Every milestone ends with typecheck and build pass
 **Done when:** all six planted storylines appear as insights with correct numbers.
 
 ## M7 — Budget planner
-- [ ] Response curves calibrated to the last 30 days
-- [ ] Sliders, number inputs, lock-total rebalancing
-- [ ] Projections and per-channel curve charts
-- [ ] Optimize button with animated sliders
+- [x] Response curves calibrated to the last 30 days
+- [x] Sliders, number inputs, lock-total rebalancing
+- [x] Projections and per-channel curve charts
+- [x] Optimize button with animated sliders
 
 **Done when:** Optimize moves budget toward TikTok and away from Meta, and the projected totals update live.
 

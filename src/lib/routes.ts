@@ -13,17 +13,19 @@ export interface NavItem {
   path: string
   title: string
   icon: LucideIcon
+  /** False for pages that ignore the global date and channel filters, so the top bar hides them. */
+  usesFilters: boolean
 }
 
 // Single list that drives the sidebar, the top-bar title and (later) the ⌘K palette.
 export const NAV_ITEMS: readonly NavItem[] = [
-  { path: '/', title: 'Overview', icon: LayoutDashboard },
-  { path: '/channels', title: 'Channels', icon: Activity },
-  { path: '/campaigns', title: 'Campaigns', icon: Megaphone },
-  { path: '/funnel', title: 'Funnel', icon: Filter },
-  { path: '/planner', title: 'Budget Planner', icon: SlidersHorizontal },
-  { path: '/insights', title: 'Insights', icon: Lightbulb },
-  { path: '/sources', title: 'Data Sources', icon: Database },
+  { path: '/', title: 'Overview', icon: LayoutDashboard, usesFilters: true },
+  { path: '/channels', title: 'Channels', icon: Activity, usesFilters: true },
+  { path: '/campaigns', title: 'Campaigns', icon: Megaphone, usesFilters: true },
+  { path: '/funnel', title: 'Funnel', icon: Filter, usesFilters: true },
+  { path: '/planner', title: 'Budget Planner', icon: SlidersHorizontal, usesFilters: false },
+  { path: '/insights', title: 'Insights', icon: Lightbulb, usesFilters: true },
+  { path: '/sources', title: 'Data Sources', icon: Database, usesFilters: false },
 ]
 
 export function isNavItemActive(item: NavItem, pathname: string): boolean {
