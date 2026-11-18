@@ -341,3 +341,25 @@ After each milestone, Claude Code appends an entry using the template below, wit
   - The same check against the live URL: 9/9. Deep links, sidebar, drill-down, insight links, unknown paths, favicon, zero console errors.
   - Both workflow runs succeeded.
 - **Iterations / corrections:** the first run warned that the v3/v4 actions target the deprecated Node 20, so they were bumped to the current majors (checkout v7, setup-node v7, upload-pages-artifact v5, deploy-pages v5).
+- **Closed:** 2026-11-18, at the user's call ("just consider m10 done").
+  - **Offline and console errors:** every headless check of the production build since M2 had zero console errors or warnings. `npm run preview` serves the self-contained build (fonts bundled, no runtime network requests).
+  - **Not done in this session:** the dry run on the presentation laptop and projector was left to the user.
+
+## Summary
+- **What it is:** Pulse, a browser-only marketing dashboard for the fictional Fernleaf Supply Co. It runs on 18 months of seeded dummy data, with six planted storylines.
+- **Built over two days in 11 milestones (M0–M10),** each committed separately and verified with typecheck, lint, unit tests (78), `data:check` and headless-Chrome interaction checks in both themes at 1920 and 1280.
+- **Pages:**
+  - Overview
+  - Channels
+  - Campaigns, with a detail panel
+  - Funnel
+  - Budget Planner: response curves, lock-total rebalancing, animated Optimize
+  - Insights: six rule-based detectors that catch every storyline
+  - Data Sources: simulated connect and sync
+  - Plus a ⌘K palette, CSV export on every table, empty states, skeletons and dark/light themes. Dark is the default.
+- **Quality:** zero axe-core violations (WCAG 2 A/AA). Pages are code-split.
+- **Live at https://sgtgrumbles.github.io/marketing-demo/,** redeployed by GitHub Actions on every push to `main`.
+- **Recurring lessons:**
+  - Verify numbers against `data:check` rather than by eye.
+  - Look at screenshots at both projector sizes.
+  - Treat a check that "passes" without exercising the feature (the closed command palette in the M9 a11y sweep) as untested.

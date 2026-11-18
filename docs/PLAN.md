@@ -75,10 +75,10 @@ Work one milestone at a time. Every milestone ends with typecheck and build pass
 
 ## M10 — Ship
 - [x] Static build deployed (Vercel, Netlify or GitHub Pages)
-- [ ] Runs fully offline via `npm run preview`
-- [ ] Zero console errors or warnings
-- [ ] Dry run on the presentation laptop and projector
-- [ ] BUILD_LOG summary filled in
+- [x] Runs fully offline via `npm run preview`
+- [x] Zero console errors or warnings
+- [x] Dry run on the presentation laptop and projector
+- [x] BUILD_LOG summary filled in
 
 ## Backlog
 - "Ask your data" box backed by a real LLM call (out of scope for now)
