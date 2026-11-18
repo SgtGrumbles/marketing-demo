@@ -43,8 +43,8 @@ Work one milestone at a time. Every milestone ends with typecheck and build pass
 **Done when:** clicking from Overview → Channel → Campaign keeps the filters, and the creative fatigue is visible in the Meta creatives table.
 
 ## M5 — Funnel
-- [ ] Funnel chart with step conversion rates
-- [ ] By-channel comparison and biggest-drop-off callout
+- [x] Funnel chart with step conversion rates
+- [x] By-channel comparison and biggest-drop-off callout
 
 ## M6 — Insights
 - [ ] lib/insights.ts with the six rule types

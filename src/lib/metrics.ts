@@ -45,6 +45,10 @@ export const cpa = (t: Pick<Totals, 'spend' | 'orders'>) => costPer(t.spend, t.o
 export const roas = (t: Pick<Totals, 'revenue' | 'spend'>) => ratio(t.revenue, t.spend)
 export const aov = (t: Pick<Totals, 'revenue' | 'orders'>) => ratio(t.revenue, t.orders)
 export const cac = (t: Pick<Totals, 'spend' | 'newCustomers'>) => costPer(t.spend, t.newCustomers)
+/** Funnel step rates: the share of one stage that reaches the next. */
+export const landingRate = (t: Pick<Totals, 'sessions' | 'clicks'>) => ratio(t.sessions, t.clicks)
+export const cartRate = (t: Pick<Totals, 'addToCarts' | 'sessions'>) => ratio(t.addToCarts, t.sessions)
+export const checkoutRate = (t: Pick<Totals, 'orders' | 'addToCarts'>) => ratio(t.orders, t.addToCarts)
 /** Marketing efficiency ratio: pass totals across all channels, including unpaid ones. */
 export const mer = (allChannels: Pick<Totals, 'revenue' | 'spend'>) => ratio(allChannels.revenue, allChannels.spend)
 
@@ -61,6 +65,9 @@ export type MetricKey =
   | 'aov'
   | 'cac'
   | 'mer'
+  | 'landingRate'
+  | 'cartRate'
+  | 'checkoutRate'
 
 export interface MetricDefinition {
   key: MetricKey
@@ -96,6 +103,9 @@ export const METRICS: Readonly<Record<MetricKey, MetricDefinition>> = {
   aov: { key: 'aov', label: 'AOV', format: 'unitCost', goodDirection: 'up', compute: aov },
   cac: { key: 'cac', label: 'CAC', format: 'unitCost', goodDirection: 'down', compute: cac },
   mer: { key: 'mer', label: 'MER', format: 'multiplier', goodDirection: 'up', compute: mer },
+  landingRate: { key: 'landingRate', label: 'Landing rate', format: 'percent', goodDirection: 'up', compute: landingRate },
+  cartRate: { key: 'cartRate', label: 'Add-to-cart rate', format: 'percent', goodDirection: 'up', compute: cartRate },
+  checkoutRate: { key: 'checkoutRate', label: 'Checkout rate', format: 'percent', goodDirection: 'up', compute: checkoutRate },
 }
 
 /** Relative change, e.g. 0.124 for +12.4%. Null when either side is missing or the base is zero. */

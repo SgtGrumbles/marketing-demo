@@ -17,6 +17,13 @@ describe('ratios', () => {
     expect(METRICS.cac.compute(totals)).toBeCloseTo(69.7)
   })
 
+  it('funnel step rates', () => {
+    const funnel = day({ impressions: 10_000, clicks: 200, sessions: 180, addToCarts: 18, orders: 6 })
+    expect(METRICS.landingRate.compute(funnel)).toBeCloseTo(0.9)
+    expect(METRICS.cartRate.compute(funnel)).toBeCloseTo(0.1)
+    expect(METRICS.checkoutRate.compute(funnel)).toBeCloseTo(1 / 3)
+  })
+
   it('return null for a zero denominator', () => {
     const empty = emptyTotals()
     for (const metric of Object.values(METRICS)) {

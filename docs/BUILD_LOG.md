@@ -170,3 +170,26 @@ After each milestone, Claude Code appends an entry using the template below, wit
   - **Hidden chart columns:** CSS-hiding the table's sparkline column (`hidden 2xl:table-cell`) gave Recharts zero-size containers, producing 100 console warnings. Wide-only columns (30-day trend, channel badge) now aren't rendered below 1536px (`useMediaQuery`), which also stopped the 1280px table overflowing.
   - **Bundle size:** the JS bundle is 1.04 MB (315 kB gzipped), mostly Recharts. Route-level code splitting in M9 is now a priority.
 - **Screenshot:** screenshots/m4.png (Meta creatives with the fatigue tooltip), screenshots/m4-drawer.png
+
+### M5 — Funnel
+- **Start / end:** 2026-11-17 23:11 – 23:17 MST (about 6 min)
+- **Prompt(s):** "m5 then"
+- **What was built:**
+  - **KPI tiles:** CTR, landing rate, add-to-cart rate, checkout rate, CVR and orders, with deltas and sparklines. The three new step rates are in `lib/metrics.ts`.
+  - **Stage chart:** Impressions → Clicks → Sessions → Add to cart → Orders, with counts, step conversion and change vs. the previous period. Counts span ~1000×, so each bar shows the share of the previous stage that continued (a linear 0–100% scale) rather than counts, and the card says so. The biggest drop-off row is highlighted.
+  - **Biggest drop-off callout:** the on-site step with the lowest conversion, the people lost, the prior-period rate, and the selected channel converting worst there (it must have ≥2% of the step's volume), with a link to that channel's page. CTR is excluded because it's always the smallest rate in an ad funnel. Last 30 days: Sessions → Add to cart, 11.9% (568,186 lost), with Organic Search lowest at 6.8%.
+  - **"Where each channel leaks":** four small multiples, one per step, with a bar per channel in channel colors and a rule at the blended rate.
+  - `lib/funnel.ts` (`FUNNEL_STAGES`, `FUNNEL_STEPS`, `funnelStages`, `biggestDropOff`) with 5 tests (54 total).
+- **Verification:** headless Chrome, 5 checks:
+  - five stages with exactly one highlighted
+  - the callout names the step, the weakest channel and the prior rate
+  - four panels with a label per channel
+  - the callout link → `/channels/organic?range=7d`
+  - single channel with compare off → no weakest-channel line and no deltas
+  - Both themes at 1920 and 1280, zero console errors.
+- **Files changed:** `src/pages/funnel.tsx`, `src/components/funnel/*`, `src/lib/{funnel,metrics}.ts` with tests.
+- **What went wrong and how it was fixed:**
+  - The drop-off row was first matched by float equality; it now carries the stage key it fails to reach.
+  - Value labels in the small multiples were struck through by the blended-rate rule. Recharts 3 draws ReferenceLine (z-index 400) above bars (300) whatever the JSX order, so the rule is now `zIndex={250}`, and labels get a card-colored halo (`paint-order: stroke`) that breaks the line around the text.
+  - A scratch inspection command had a stray `cat > /tmp/x.ts` with no input and hung. My attempt to clear it with `pkill -f cat` was rightly blocked as too broad; stopped the specific background task instead and removed the empty file it created.
+- **Screenshot:** screenshots/m5.png, screenshots/m5-dark.png
