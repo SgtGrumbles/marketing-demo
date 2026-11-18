@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { THEME_STORAGE_KEY, ThemeContext, type Theme } from './theme-context'
 
-// Light is the default; index.html applies the stored theme before first paint.
+// Dark is the default; index.html applies the stored theme before first paint.
 function readStoredTheme(): Theme {
   try {
-    return localStorage.getItem(THEME_STORAGE_KEY) === 'dark' ? 'dark' : 'light'
+    return localStorage.getItem(THEME_STORAGE_KEY) === 'light' ? 'light' : 'dark'
   } catch {
-    return 'light'
+    return 'dark'
   }
 }
 

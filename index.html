@@ -8,9 +8,10 @@
     <meta name="robots" content="noindex, nofollow" />
     <title>Pulse · Marketing Analytics</title>
     <script>
-      // Apply the saved theme before first paint to avoid a light/dark flash. Light is the default.
+      // Apply the saved theme before first paint to avoid a light/dark flash. Dark is the default.
+      document.documentElement.classList.add('dark')
       try {
-        if (localStorage.getItem('pulse-theme') === 'dark') document.documentElement.classList.add('dark')
+        if (localStorage.getItem('pulse-theme') === 'light') document.documentElement.classList.remove('dark')
       } catch {}
     </script>
   </head>
