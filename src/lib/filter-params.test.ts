@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_FILTERS, filterSearch, parseFilters, writeFilters, type Filters } from './filter-params'
+import { DEFAULT_FILTERS, filterSearch, hasCanonicalFilters, parseFilters, writeFilters, type Filters } from './filter-params'
 
 const parse = (query: string) => parseFilters(new URLSearchParams(query))
 
@@ -28,5 +28,12 @@ describe('filter params', () => {
   it('keeps unrelated params', () => {
     const params = writeFilters({ ...DEFAULT_FILTERS, range: '7d' }, new URLSearchParams('campaign=meta-lookalike&range=90d'))
     expect(params.toString()).toBe('campaign=meta-lookalike&range=7d')
+  })
+
+  it('recognizes canonical filter params, ignoring unrelated ones', () => {
+    const sevenDays = { ...DEFAULT_FILTERS, range: '7d' } as const
+    expect(hasCanonicalFilters(new URLSearchParams('campaign=meta-lookalike&range=7d'), sevenDays)).toBe(true)
+    expect(hasCanonicalFilters(new URLSearchParams('range=bogus'), DEFAULT_FILTERS)).toBe(false)
+    expect(hasCanonicalFilters(new URLSearchParams('range=30d'), DEFAULT_FILTERS)).toBe(false)
   })
 })

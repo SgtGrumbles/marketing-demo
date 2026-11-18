@@ -68,6 +68,12 @@ export function filterSearch(filters: Filters): string {
   return query ? `?${query}` : ''
 }
 
+/** True when the URL's filter params are exactly the canonical form of `filters` (other params are ignored). */
+export function hasCanonicalFilters(params: URLSearchParams, filters: Filters): boolean {
+  const own = new URLSearchParams([...params].filter(([key]) => (FILTER_KEYS as readonly string[]).includes(key)))
+  return own.toString() === writeFilters(filters).toString()
+}
+
 export function sameFilters(a: Filters, b: Filters): boolean {
   return writeFilters(a).toString() === writeFilters(b).toString()
 }

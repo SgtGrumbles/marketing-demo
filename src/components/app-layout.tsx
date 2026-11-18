@@ -1,5 +1,6 @@
 import { Outlet, useLocation } from 'react-router'
 import { AppSidebar } from '@/components/app-sidebar'
+import { CampaignDrawer } from '@/components/campaigns/campaign-drawer'
 import { FilterBar } from '@/components/filters/filter-bar'
 import { SyncStatus } from '@/components/sync-status'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
@@ -30,6 +31,7 @@ export function AppLayout() {
         <div className="flex-1 p-6">
           <Outlet />
         </div>
+        <CampaignDrawer />
       </SidebarInset>
     </SidebarProvider>
   )

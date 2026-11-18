@@ -102,3 +102,40 @@ export function channelRows(facts: readonly DailyFact[], channels: readonly Chan
     }
   })
 }
+
+/** The KPI tiles for a channel: cost metrics only where there is spend to speak of. */
+export function channelKpis(channel: ChannelKey): readonly MetricKey[] {
+  if (CHANNELS[channel].paid) return ['spend', 'revenue', 'roas', 'cpa', 'ctr', 'cvr']
+  if (channel === 'organic') return ['sessions', 'revenue', 'orders', 'cvr', 'ctr', 'newCustomers']
+  return ['spend', 'revenue', 'roas', 'orders', 'cvr', 'ctr']
+}
+
+/** Metrics offered in trend pickers. */
+export const TREND_METRICS: readonly MetricKey[] = ['spend', 'revenue', 'roas', 'ctr', 'cpa', 'cvr']
+
+/** Spend-based metrics mean nothing for a channel with no spend. */
+export function isTrendMetricAvailable(metric: MetricKey, hasSpend: boolean): boolean {
+  return hasSpend || !['spend', 'roas', 'cpa'].includes(metric)
+}
+
+export interface MetricTrendPoint {
+  date: string
+  days: number
+  value: number | null
+  previousDate?: string
+  previousValue?: number | null
+}
+
+/** One metric over time, with the previous period aligned by position. */
+export function metricTrend(metric: MetricKey, current: readonly SeriesPoint[], previous: readonly SeriesPoint[] | null): MetricTrendPoint[] {
+  const compute = METRICS[metric].compute
+  return current.map((point, index) => {
+    const prior = previous?.[index]
+    return {
+      date: point.date,
+      days: point.days,
+      value: compute(point),
+      ...(prior && { previousDate: prior.date, previousValue: compute(prior) }),
+    }
+  })
+}

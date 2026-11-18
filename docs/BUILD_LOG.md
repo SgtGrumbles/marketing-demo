@@ -125,3 +125,48 @@ After each milestone, Claude Code appends an entry using the template below, wit
   - Moved `tooltipDatum` to its own file for the fast-refresh lint rule, and replaced a `Granularity` cast with a type guard.
 - **What went wrong and how it was fixed:** My first browser-test check for "dashed comparison lines" counted `stroke-dasharray`, which Recharts also sets while animating, so it was meaningless. Verified from screenshots instead.
 - **Screenshot:** screenshots/m3.png, screenshots/m3-dark.png
+
+### M4 — Channels and Campaigns
+- **Start / end:** 2026-11-17 22:51 – 23:04 MST (about 13 min, including a pause where plan mode was switched on mid-milestone and the remaining steps were written up and approved)
+- **Prompt(s):** "proceed with m4", then approval of the plan for the rest of M4
+- **What was built:**
+  - **Channels page (`/channels/:channel`):**
+    - Swatch tabs for all six channels; switching keeps the filters. A bare or invalid channel redirects to the first selected one.
+    - Channel-specific KPI tiles (cost metrics only where there's spend).
+    - A trend chart with a metric picker (Spend/Revenue/ROAS/CTR/CPA/CVR); spend-based metrics are disabled for organic.
+    - A campaigns table, and for Meta and TikTok a creatives table with placeholder thumbnails, CTR, 21-day CTR change, frequency, CPA and a Fatigue badge with an explanatory tooltip.
+  - **Campaigns page:**
+    - All campaigns with channel badge, status, spend, revenue, ROAS, CPA, a budget pacing bar (used share, a tick at the expected share, red over 110%) and a 30-day spend sparkline.
+    - Search, status filter, a count, sortable columns, CSV export of exactly what's shown, and an empty state with "Clear filters".
+  - **Campaign drawer:**
+    - Opened from any table via `?campaign=id`, so it's linkable and Back closes it. Mounted once in the layout, ready for M6 "View" links.
+    - Shows the campaign's KPIs, a trend with metric picker, the month's budget (spent, budget, projected) and its creatives.
+  - **Library:**
+    - `lib/campaigns.ts`: pacing, 30-day trends, campaign rows.
+    - `lib/creatives.ts`: `FATIGUE_RULE` and `fatigueSignal`, shared with the M6 insights engine.
+    - `lib/csv.ts`, `lib/exports.ts` (CSV layouts with raw values).
+    - `hooks/use-media-query.ts`.
+    - Generic `KpiGrid`, `MetricTrendChart`, `MetricPicker`, `PacingBar`, `ChannelBadge`, `StatusBadge`, `ExportButton`.
+  - 9 new unit tests (49 total), including "fatigue fires only for Summer Trail – Video 03", "stays quiet in September" and "only search-shopping paces over".
+- **Verification:** headless Chrome, 18 checks:
+  - Overview row → `/channels/meta?range=7d` → campaign row → `…&campaign=meta-lookalike` with the filters kept, and Back closes the drawer.
+  - Fatigue badge on Video 03 only, sorted first.
+  - Drawer contents.
+  - Tab switching, the organic metric picker, and redirects.
+  - Search, status filter, pacing sort (Shopping first at 115.0%, marked over).
+  - A real CSV download (header + 22 rows in on-screen order).
+  - The empty state.
+  - Screenshots at 1280×720 and 1920×1080 in both themes, zero console warnings. The M2 URL suite still passes.
+  - Meta spend for the last 30 days on the channel page ($312.3K) matches data:check ($312,274).
+- **Decisions:**
+  - The global top-bar channel filter is the Campaigns page's channel filter (no duplicate control).
+  - Channel tabs show every channel, and the route decides.
+  - The drawer's state lives in the URL.
+  - Fatigue compares the first and last 3 days of the 21-day window. Comparing weeks diluted it to −33%; 3 days gives 1.9 → 4.5 frequency, CTR −40%, CPA +34%, matching DATA.md and data:check.
+- **Files changed:** `src/pages/{channels,campaigns,overview}.tsx`, `src/components/{campaigns/*,channels/*,charts/metric-*.tsx,kpi-grid,kpi-card,channel-badge,status-badge,pacing-bar,export-button,app-layout}.tsx`, `src/lib/{campaigns,creatives,csv,exports,summaries,filter-params}.ts` with tests, `src/hooks/use-media-query.ts`, `src/store/{use-campaign-param,use-filter-url-sync}.ts`, shadcn tabs and select.
+- **What went wrong and how it was fixed:**
+  - **URL rewrites:** opening the drawer made the URL sync rewrite the query string just to reorder params, because it compared raw strings. It now rewrites only when the filter params aren't canonical (`hasCanonicalFilters`), which also still cleans invalid params like `?range=bogus`.
+  - **Clipped tooltips:** sparkline tooltips were cut off by the Card's `overflow-hidden`, a bug since M3 that my text-only check had missed. KPI cards are now `overflow-visible`, and table sparklines put their tooltip to the left so it stays inside the table's scroll area.
+  - **Hidden chart columns:** CSS-hiding the table's sparkline column (`hidden 2xl:table-cell`) gave Recharts zero-size containers, producing 100 console warnings. Wide-only columns (30-day trend, channel badge) now aren't rendered below 1536px (`useMediaQuery`), which also stopped the 1280px table overflowing.
+  - **Bundle size:** the JS bundle is 1.04 MB (315 kB gzipped), mostly Recharts. Route-level code splitting in M9 is now a priority.
+- **Screenshot:** screenshots/m4.png (Meta creatives with the fatigue tooltip), screenshots/m4-drawer.png

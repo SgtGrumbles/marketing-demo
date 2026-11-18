@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useSearchParams } from 'react-router'
-import { parseFilters, sameFilters, writeFilters } from '@/lib/filter-params'
+import { hasCanonicalFilters, parseFilters, sameFilters, writeFilters } from '@/lib/filter-params'
 import { useFilterStore } from './filters'
 
 /**
@@ -20,8 +20,10 @@ export function useFilterUrlSync(): void {
 
   // Store → URL: filter controls. Reads the store directly so a back/forward that just updated it
   // isn't overwritten with the stale render value. Replace rather than push to keep history clean.
+  // Rewrites only when the filter params aren't already canonical: that cleans up invalid or default
+  // values without reshuffling unrelated params such as ?campaign=.
   useEffect(() => {
-    const next = writeFilters(useFilterStore.getState().filters, searchParams)
-    if (next.toString() !== searchParams.toString()) setSearchParams(next, { replace: true })
+    const current = useFilterStore.getState().filters
+    if (!hasCanonicalFilters(searchParams, current)) setSearchParams(writeFilters(current, searchParams), { replace: true })
   }, [filters, searchParams, setSearchParams])
 }

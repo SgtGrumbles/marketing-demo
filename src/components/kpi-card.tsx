@@ -21,7 +21,7 @@ export function KpiCard({ summary, comparison, previousLabel }: KpiCardProps) {
   const DeltaIcon = change !== null && change < 0 ? ArrowDownRight : ArrowUpRight
 
   return (
-    <Card className="gap-1 px-4 py-4" data-kpi={key}>
+    <Card className="gap-1 overflow-visible px-4 py-4" data-kpi={key}>
       <div className="text-sm text-muted-foreground">{label}</div>
       <div className="text-[28px] leading-9 font-semibold tracking-tight" data-value>
         {formatValue(format, value, { compact: format === 'currency' })}

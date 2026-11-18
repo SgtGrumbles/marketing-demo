@@ -36,9 +36,9 @@ Work one milestone at a time. Every milestone ends with typecheck and build pass
 **Done when:** it matches SCREENS.md §1 and the numbers reconcile with data:check for the same range.
 
 ## M4 — Channels and Campaigns
-- [ ] Channels page with tabs, metric picker and creatives table
-- [ ] Campaigns page with search, filters, sorting, CSV export
-- [ ] Campaign detail drawer
+- [x] Channels page with tabs, metric picker and creatives table
+- [x] Campaigns page with search, filters, sorting, CSV export
+- [x] Campaign detail drawer
 
 **Done when:** clicking from Overview → Channel → Campaign keeps the filters, and the creative fatigue is visible in the Meta creatives table.
 
