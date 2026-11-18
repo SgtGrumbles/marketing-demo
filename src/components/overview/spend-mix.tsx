@@ -21,7 +21,7 @@ export function SpendMix() {
         <CardDescription>Share of spend by channel</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={{}} className="aspect-auto w-full" style={{ height: Math.max(paid.length, 1) * 44 }} aria-label="Share of spend by channel">
+        <ChartContainer role="figure" config={{}} className="aspect-auto w-full" style={{ height: Math.max(paid.length, 1) * 44 }} aria-label="Share of spend by channel">
           <BarChart data={paid} layout="vertical" margin={{ top: 0, right: 48, bottom: 0, left: 0 }} barCategoryGap={10}>
             <XAxis type="number" hide domain={[0, 'dataMax']} />
             <YAxis type="category" dataKey="label" tickLine={false} axisLine={false} width={104} tick={{ fill: 'var(--foreground)', fontSize: 13 }} />

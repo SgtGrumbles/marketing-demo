@@ -43,7 +43,7 @@ export function ResponseCurveChart({ curve, proposed }: ResponseCurveChartProps)
             Proposed
           </span>
         </div>
-        <ChartContainer config={{ revenue: { label: 'Revenue', color } }} className="aspect-auto h-44 w-full" aria-label={`${label} response curve`}>
+        <ChartContainer role="figure" config={{ revenue: { label: 'Revenue', color } }} className="aspect-auto h-44 w-full" aria-label={`${label} response curve`}>
           <LineChart data={curvePoints(curve)} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
             <CartesianGrid vertical={false} />
             <XAxis dataKey="spend" type="number" domain={[0, curve.maxSpend]} tickFormatter={formatCurrencyCompact} tickLine={false} axisLine={false} tickMargin={8} ticks={niceTicks(curve.maxSpend)} />

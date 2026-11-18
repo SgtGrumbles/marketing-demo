@@ -1,7 +1,10 @@
+import { Suspense } from 'react'
 import { Outlet, useLocation } from 'react-router'
 import { AppSidebar } from '@/components/app-sidebar'
 import { CampaignDrawer } from '@/components/campaigns/campaign-drawer'
+import { CommandPalette } from '@/components/command-palette'
 import { FilterBar } from '@/components/filters/filter-bar'
+import { PageSkeleton } from '@/components/page-skeleton'
 import { SyncStatus } from '@/components/sync-status'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { Separator } from '@/components/ui/separator'
@@ -16,8 +19,11 @@ export function AppLayout() {
 
   return (
     <SidebarProvider>
+      <a href="#content" className="sr-only z-50 rounded-md bg-background px-3 py-2 text-sm font-medium shadow focus:not-sr-only focus:fixed focus:top-2 focus:left-2">
+        Skip to content
+      </a>
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="min-w-0">
         <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-3 border-b bg-background/90 px-4 backdrop-blur">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="h-5 data-vertical:self-center" />
@@ -28,10 +34,16 @@ export function AppLayout() {
             <ThemeToggle />
           </div>
         </header>
-        <div className="flex-1 p-6">
-          <Outlet />
+        <div id="content" tabIndex={-1} className="flex-1 p-6 outline-none">
+          <Suspense fallback={<PageSkeleton />}>
+            {/* Keyed by page, so each one fades in on arrival. */}
+            <div key={page?.path ?? pathname} className="animate-in duration-200 fade-in motion-reduce:animate-none">
+              <Outlet />
+            </div>
+          </Suspense>
         </div>
         <CampaignDrawer />
+        <CommandPalette />
       </SidebarInset>
     </SidebarProvider>
   )

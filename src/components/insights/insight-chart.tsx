@@ -12,7 +12,7 @@ type BarDatum = Extract<ChartSpec, { kind: 'bars' }>['bars'][number]
 export function InsightChart({ chart, label }: { chart: ChartSpec; label: string }) {
   if (chart.kind === 'bars') {
     return (
-      <ChartContainer config={{}} className="aspect-auto h-24 w-full" aria-label={label}>
+      <ChartContainer role="figure" config={{}} className="aspect-auto h-24 w-full" aria-label={label}>
         <BarChart data={chart.bars} layout="vertical" margin={{ top: 4, right: 40, bottom: 4, left: 0 }} barCategoryGap={6}>
           <XAxis type="number" hide domain={[0, 'dataMax']} />
           <YAxis type="category" dataKey="label" width={64} tickLine={false} axisLine={false} tick={{ fill: 'var(--foreground)', fontSize: 12 }} />
@@ -37,7 +37,7 @@ export function InsightChart({ chart, label }: { chart: ChartSpec; label: string
 
   const highlighted = chart.points.find((p) => p.date === chart.highlight)
   return (
-    <ChartContainer config={{}} className="aspect-auto h-24 w-full" aria-label={label}>
+    <ChartContainer role="figure" config={{}} className="aspect-auto h-24 w-full" aria-label={label}>
       <LineChart data={chart.points} margin={{ top: 8, right: 8, bottom: 4, left: 8 }}>
         <XAxis dataKey="date" hide />
         <YAxis hide domain={['auto', 'auto']} />

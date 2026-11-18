@@ -38,12 +38,12 @@ export function ChannelStepComparison({ byChannel, channels, totals }: { byChann
           return (
             <section key={step.metric} className="grid gap-2" data-step={step.metric}>
               <div>
-                <h3 className="text-sm font-medium">{metric.label}</h3>
+                <h2 className="text-sm font-medium">{metric.label}</h2>
                 <p className="text-xs text-muted-foreground">
                   {stageLabel(step.from)} → {stageLabel(step.to)} · blended {formatPercent(blended)}
                 </p>
               </div>
-              <ChartContainer config={{}} className="aspect-auto w-full" style={{ height: rows.length * 34 + 8 }} aria-label={`${metric.label} by channel`}>
+              <ChartContainer role="figure" config={{}} className="aspect-auto w-full" style={{ height: rows.length * 34 + 8 }} aria-label={`${metric.label} by channel`}>
                 <BarChart data={rows} layout="vertical" margin={{ top: 4, right: 48, bottom: 4, left: 0 }} barCategoryGap={8}>
                   <XAxis type="number" hide domain={[0, max * 1.05]} />
                   <YAxis type="category" dataKey="label" tickLine={false} axisLine={false} width={104} tick={{ fill: 'var(--foreground)', fontSize: 12 }} />

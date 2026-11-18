@@ -22,7 +22,7 @@ interface SparklineProps {
 
 export function Sparkline({ data, label, format, color, className, tooltipSide = 'below' }: SparklineProps) {
   return (
-    <ChartContainer config={{ value: { label, color } }} className={cn('aspect-auto h-10 w-full', className)} aria-label={`${label} trend`}>
+    <ChartContainer role="figure" config={{ value: { label, color } }} className={cn('aspect-auto h-10 w-full', className)} aria-label={`${label} trend`}>
       <LineChart data={[...data]} margin={{ top: 4, right: 2, bottom: 4, left: 2 }}>
         <YAxis hide domain={['dataMin', 'dataMax']} />
         <Tooltip

@@ -67,11 +67,11 @@ Work one milestone at a time. Every milestone ends with typecheck and build pass
 - [x] Sync now
 
 ## M9 — Polish
-- [ ] Skeletons, empty states, transitions
-- [ ] CSV export on every table
-- [ ] ⌘K command palette
-- [ ] Layout check at 1920×1080 and 1280×720
-- [ ] Accessibility pass: keyboard navigation, focus states, contrast
+- [x] Skeletons, empty states, transitions
+- [x] CSV export on every table
+- [x] ⌘K command palette
+- [x] Layout check at 1920×1080 and 1280×720
+- [x] Accessibility pass: keyboard navigation, focus states, contrast
 
 ## M10 — Ship
 - [ ] Static build deployed (Vercel, Netlify or GitHub Pages)

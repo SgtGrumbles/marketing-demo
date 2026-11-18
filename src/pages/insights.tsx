@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { CircleCheck } from 'lucide-react'
+import { NoDataState } from '@/components/no-data-state'
 import { InsightCard } from '@/components/insights/insight-card'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { INSIGHT_TYPES, type InsightType } from '@/lib/insights'
+import { useFilteredData } from '@/store/use-filtered-data'
 import { useInsights } from '@/store/use-insights'
 
 export function InsightsPage() {
@@ -10,6 +12,8 @@ export function InsightsPage() {
   const [type, setType] = useState<InsightType | 'all'>('all')
   const visible = type === 'all' ? insights : insights.filter((insight) => insight.type === type)
   const count = (key: InsightType) => insights.filter((insight) => insight.type === key).length
+  const { facts, filters, range } = useFilteredData()
+  if (facts.length === 0) return <NoDataState channels={filters.channels} range={range} />
 
   return (
     <div className="flex flex-col gap-6">

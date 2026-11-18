@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { MetricPicker } from '@/components/charts/metric-picker'
 import { MetricTrendChart } from '@/components/charts/metric-trend-chart'
 import { ChannelBadge } from '@/components/channel-badge'
+import { ExportButton } from '@/components/export-button'
 import { KpiGrid } from '@/components/kpi-grid'
 import { PacingBar } from '@/components/pacing-bar'
 import { StatusBadge } from '@/components/status-badge'
@@ -11,6 +12,8 @@ import { filterFacts } from '@/lib/aggregate'
 import { pacingByCampaign } from '@/lib/campaigns'
 import { channelColor } from '@/lib/channels'
 import { creativeRows } from '@/lib/creatives'
+import { toCsv } from '@/lib/csv'
+import { CREATIVE_CSV, exportFilename } from '@/lib/exports'
 import { formatCurrency, formatDateRange, formatDateTooltip } from '@/lib/format'
 import type { MetricKey } from '@/lib/metrics'
 import { channelKpis } from '@/lib/summaries'
@@ -87,7 +90,10 @@ function CampaignDetail({ campaign }: { campaign: Campaign }) {
 
         {creatives.sorted.length > 0 && (
           <section className="grid gap-2">
-            <h3 className="text-sm font-medium">Creatives</h3>
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-sm font-medium">Creatives</h3>
+              <ExportButton filename={exportFilename(`${campaign.id}-creatives`, range)} build={() => toCsv(creatives.sorted, CREATIVE_CSV)} />
+            </div>
             <CreativesTable rows={creatives.sorted} sort={creatives.sort} onSort={creatives.onSort} showCampaign={false} />
           </section>
         )}

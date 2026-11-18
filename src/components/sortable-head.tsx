@@ -6,7 +6,8 @@ import { cn } from '@/lib/utils'
 
 interface SortableHeadProps<K extends string> {
   column: K
-  sort: SortState<K>
+  /** Null when the table is in its natural order. */
+  sort: SortState<K> | null
   onSort: (column: K) => void
   align?: 'left' | 'right'
   className?: string
@@ -14,11 +15,12 @@ interface SortableHeadProps<K extends string> {
 }
 
 export function SortableHead<K extends string>({ column, sort, onSort, align = 'right', className, children }: SortableHeadProps<K>) {
-  const active = sort.key === column
-  const Icon = !active ? ArrowUpDown : sort.direction === 'asc' ? ArrowUp : ArrowDown
+  const direction = sort?.key === column ? sort.direction : null
+  const active = direction !== null
+  const Icon = !direction ? ArrowUpDown : direction === 'asc' ? ArrowUp : ArrowDown
   return (
     <TableHead
-      aria-sort={active ? (sort.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
+      aria-sort={!direction ? 'none' : direction === 'asc' ? 'ascending' : 'descending'}
       className={cn(align === 'right' && 'text-right', className)}
     >
       <button

@@ -3,12 +3,16 @@ import { useNavigate } from 'react-router'
 import { ChevronRight } from 'lucide-react'
 import { ChannelSwatch } from '@/components/channel-swatch'
 import { SortableHead } from '@/components/sortable-head'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ExportButton } from '@/components/export-button'
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { channelColor } from '@/lib/channels'
+import { toCsv } from '@/lib/csv'
+import { CHANNEL_CSV, exportFilename } from '@/lib/exports'
 import { filterSearch } from '@/lib/filter-params'
 import { formatCurrency, formatMultiplier, formatPercent, formatUnitCost } from '@/lib/format'
 import { METRICS } from '@/lib/metrics'
+import { rowAction } from '@/lib/row-action'
 import { nextSort, sortRows, type SortState } from '@/lib/sort'
 import { channelRows, type ChannelRow } from '@/lib/summaries'
 import { useFilteredData } from '@/store/use-filtered-data'
@@ -16,7 +20,7 @@ import { useFilteredData } from '@/store/use-filtered-data'
 type Column = 'label' | 'spend' | 'revenue' | 'roas' | 'cpa' | 'cvr' | 'spendShare'
 
 export function ChannelTable() {
-  const { facts, filters, totals } = useFilteredData()
+  const { facts, filters, totals, range } = useFilteredData()
   const navigate = useNavigate()
   const [sort, setSort] = useState<SortState<Column>>({ key: 'spend', direction: 'desc' })
   const rows = sortRows(channelRows(facts, filters.channels), sort, (row, key) => row[key])
@@ -28,6 +32,9 @@ export function ChannelTable() {
       <CardHeader>
         <CardTitle>Channels</CardTitle>
         <CardDescription>Select a channel to drill in</CardDescription>
+        <CardAction>
+          <ExportButton filename={exportFilename('channels', range)} build={() => toCsv(rows, CHANNEL_CSV)} />
+        </CardAction>
       </CardHeader>
       <CardContent>
         <Table data-testid="channel-table">
@@ -40,17 +47,16 @@ export function ChannelTable() {
               <SortableHead column="cpa" sort={sort} onSort={onSort}>CPA</SortableHead>
               <SortableHead column="cvr" sort={sort} onSort={onSort}>CVR</SortableHead>
               <SortableHead column="spendShare" sort={sort} onSort={onSort} align="left" className="w-40">Share of spend</SortableHead>
-              <TableHead className="w-6" />
+              <TableHead className="w-6">
+                <span className="sr-only">Open</span>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {rows.map((row) => (
               <TableRow
                 key={row.key}
-                tabIndex={0}
-                className="cursor-pointer"
-                onClick={() => openChannel(row)}
-                onKeyDown={(event) => event.key === 'Enter' && openChannel(row)}
+                {...rowAction(() => openChannel(row))}
               >
                 <TableCell className="font-medium">
                   <span className="flex items-center gap-2">

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Search, SearchX } from 'lucide-react'
 import { CampaignTable } from '@/components/campaigns/campaign-table'
 import { useSortedCampaigns } from '@/components/campaigns/use-sorted-campaigns'
+import { NoDataState } from '@/components/no-data-state'
 import { ExportButton } from '@/components/export-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -39,6 +40,8 @@ export function CampaignsPage() {
     setQuery('')
     setStatus('all')
   }
+
+  if (facts.length === 0) return <NoDataState channels={filters.channels} range={range} />
 
   return (
     <Card>

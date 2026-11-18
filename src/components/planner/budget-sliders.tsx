@@ -1,11 +1,10 @@
-import type { CSSProperties } from 'react'
 import { Lock } from 'lucide-react'
 import { BudgetInput } from '@/components/planner/budget-input'
+import { BudgetSlider } from '@/components/planner/budget-slider'
 import { ChannelSwatch } from '@/components/channel-swatch'
 import { PlanDelta } from '@/components/planner/plan-delta'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
 import { channelColor, channelLabel } from '@/lib/channels'
 import { formatCurrency, formatCurrencyCompact } from '@/lib/format'
@@ -43,15 +42,13 @@ export function BudgetSliders({ baseline }: { baseline: PlannerBaseline }) {
                 <ChannelSwatch channel={channel} />
                 {label}
               </div>
-              <Slider
-                aria-label={`${label} budget`}
-                min={0}
+              <BudgetSlider
+                label={`${label} budget`}
                 max={curve.maxSpend}
                 step={SLIDER_STEP}
-                value={[allocation[channel]]}
-                onValueChange={([value]) => value !== undefined && setBudget(channel, value)}
-                className="[&_[data-slot=slider-range]]:bg-(--channel) [&_[data-slot=slider-thumb]]:size-4 [&_[data-slot=slider-thumb]]:border-(--channel) [&_[data-slot=slider-track]]:h-1.5"
-                style={{ '--channel': channelColor(channel) } as CSSProperties}
+                value={allocation[channel]}
+                color={channelColor(channel)}
+                onChange={(value) => setBudget(channel, value)}
               />
               <BudgetInput value={allocation[channel]} label={`${label} budget in dollars`} onCommit={(value) => setBudget(channel, value)} />
               <div className="col-start-2 flex justify-between text-xs text-muted-foreground">

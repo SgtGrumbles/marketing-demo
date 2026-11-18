@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Navigate, useParams } from 'react-router'
 import { CampaignTable } from '@/components/campaigns/campaign-table'
+import { NoDataState } from '@/components/no-data-state'
 import { CreativesTable } from '@/components/campaigns/creatives-table'
 import { useSortedCampaigns } from '@/components/campaigns/use-sorted-campaigns'
 import { useSortedCreatives } from '@/components/campaigns/use-sorted-creatives'
@@ -50,9 +51,15 @@ function ChannelView({ channel }: { channel: ChannelKey }) {
   const creatives = useSortedCreatives(creativeRows(data, new Set(campaigns.sorted.map((c) => c.id)), range))
   const label = channelLabel(channel)
 
+  if (facts.length === 0)
+    return (
+      <ChannelTabs value={channel}>
+        <NoDataState channels={[channel]} range={range} canWidenChannels={false} />
+      </ChannelTabs>
+    )
+
   return (
-    <div className="flex flex-col gap-6">
-      <ChannelTabs value={channel} />
+    <ChannelTabs value={channel}>
       <KpiGrid metrics={channelKpis(channel)} facts={facts} previousFacts={previousFacts} />
 
       <Card>
@@ -95,6 +102,6 @@ function ChannelView({ channel }: { channel: ChannelKey }) {
           </CardContent>
         </Card>
       )}
-    </div>
+    </ChannelTabs>
   )
 }

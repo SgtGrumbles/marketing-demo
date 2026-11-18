@@ -3,13 +3,16 @@ import { RouterProvider } from 'react-router/dom'
 import { AppLayout } from '@/components/app-layout'
 import { ThemeProvider } from '@/components/theme/theme-provider'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { CampaignsPage } from '@/pages/campaigns'
-import { ChannelsPage } from '@/pages/channels'
-import { FunnelPage } from '@/pages/funnel'
-import { InsightsPage } from '@/pages/insights'
-import { OverviewPage } from '@/pages/overview'
-import { PlannerPage } from '@/pages/planner'
-import { SourcesPage } from '@/pages/sources'
+import { lazyPage } from '@/lib/lazy-page'
+
+// Each page is its own chunk; AppLayout shows a skeleton while one loads.
+const OverviewPage = lazyPage(() => import('@/pages/overview'), (m) => m.OverviewPage)
+const ChannelsPage = lazyPage(() => import('@/pages/channels'), (m) => m.ChannelsPage)
+const CampaignsPage = lazyPage(() => import('@/pages/campaigns'), (m) => m.CampaignsPage)
+const FunnelPage = lazyPage(() => import('@/pages/funnel'), (m) => m.FunnelPage)
+const PlannerPage = lazyPage(() => import('@/pages/planner'), (m) => m.PlannerPage)
+const InsightsPage = lazyPage(() => import('@/pages/insights'), (m) => m.InsightsPage)
+const SourcesPage = lazyPage(() => import('@/pages/sources'), (m) => m.SourcesPage)
 
 const router = createBrowserRouter([
   {

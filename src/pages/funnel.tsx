@@ -1,6 +1,7 @@
 import { ChannelStepComparison } from '@/components/funnel/channel-step-comparison'
 import { DropOffCallout } from '@/components/funnel/drop-off-callout'
 import { FunnelStages } from '@/components/funnel/funnel-stages'
+import { NoDataState } from '@/components/no-data-state'
 import { KpiGrid } from '@/components/kpi-grid'
 import { totalsByChannel } from '@/lib/aggregate'
 import { biggestDropOff, funnelStages } from '@/lib/funnel'
@@ -11,6 +12,7 @@ const FUNNEL_KPIS = ['ctr', 'landingRate', 'cartRate', 'checkoutRate', 'cvr', 'o
 
 export function FunnelPage() {
   const { facts, previousFacts, totals, previousTotals, filters, previous, range } = useFilteredData()
+  if (facts.length === 0) return <NoDataState channels={filters.channels} range={range} />
   const showPrevious = comparisonState(filters.compare, previous) === 'on'
   const prior = showPrevious ? previousTotals : null
   const byChannel = totalsByChannel(facts)

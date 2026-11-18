@@ -33,7 +33,7 @@ export function MetricTrendChart({ metric, facts, previousFacts, color, classNam
         <LegendItem label={label} color={color} />
         {showPrevious && <LegendItem label="Previous period" color={color} dashed />}
       </div>
-      <ChartContainer config={{ value: { label, color } }} className="aspect-auto h-64 w-full" aria-label={`${label} over time`}>
+      <ChartContainer role="figure" config={{ value: { label, color } }} className="aspect-auto h-64 w-full" aria-label={`${label} over time`}>
         <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
           <CartesianGrid vertical={false} />
           <XAxis dataKey="date" tickFormatter={formatDateAxis} tickLine={false} axisLine={false} tickMargin={8} minTickGap={32} />

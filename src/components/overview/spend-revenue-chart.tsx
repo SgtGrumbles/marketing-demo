@@ -49,7 +49,7 @@ export function SpendRevenueChart() {
           <LegendItem label="Spend" color={SERIES_COLORS.spend} />
           {showPrevious && <LegendItem label="Previous period" color="var(--muted-foreground)" dashed />}
         </div>
-        <ChartContainer config={config} className="aspect-auto min-h-72 w-full flex-1" aria-label="Spend and revenue over time">
+        <ChartContainer role="figure" config={config} className="aspect-auto min-h-72 w-full flex-1" aria-label="Spend and revenue over time">
           <ComposedChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
             <defs>
               <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">

@@ -281,3 +281,47 @@ After each milestone, Claude Code appends an entry using the template below, wit
   - The progress bar trailed its percentage (44% label, about 32% fill), because the indicator's CSS transition restarted every frame. Turned it off from the call site (the shadcn file is unedited).
   - An effect event keeps a parent re-render mid-import from restarting the progress.
 - **Screenshots:** screenshots/m8.png, screenshots/m8-connect.png
+
+### M9 — Polish
+- **Start / end:** 2026-11-18 11:38 – 12:02 MST (about 24 min)
+- **Prompt(s):** "go"
+- **What was built:**
+  - **Code splitting:** each page is a lazy chunk (`lib/lazy-page.ts`). The 1.04 MB bundle became a 428 kB shell + a 347 kB chart chunk + 1–25 kB per page, with no size warning. After the first page loads, the rest are prefetched when idle, so later navigation never shows a skeleton.
+  - **Skeletons and transitions:**
+    - The first page shows a `PageSkeleton` for at least 400 ms (the "fake delay" from SCREENS.md).
+    - Pages fade in over 200 ms when you navigate (none with reduced motion).
+  - **Empty states:**
+    - `NoDataState` replaces Overview, Channels, Campaigns, Funnel and Insights when the filters select no rows.
+    - It names the channels and range, says when those channels have data (`lib/coverage.ts`), and offers "Show last 30 days" and "All channels". Before, those pages showed $0, flat lines and $0 campaign rows.
+  - **CSV export on every table:** added to the Overview channel table, the planner projection table and the drawer's creatives table. The planner table is now sortable too (it starts in planner order; `SortableHead` / `nextSort` accept "no sort yet").
+  - **⌘K palette:** `components/command-palette.tsx`, with a "Search ⌘K" button in the sidebar.
+    - It jumps to pages and channels (keeping filters), opens any campaign in the drawer over the current page, switches date presets, toggles compare, resets filters, runs "Optimize budget plan" and switches theme.
+    - **New dependency: `cmdk`**, via shadcn's Command. It provides the fuzzy search, arrow-key navigation and listbox roles. shadcn also generated `input-group`/`textarea`, which `command` depends on.
+  - **Accessibility:**
+    - Skip-to-content link.
+    - Sidebar inside a `<nav>` landmark.
+    - Clickable rows via a shared `rowAction` helper (focusable; Enter or Space; visible focus ring).
+    - Charts carry `role="figure"` with their labels.
+    - Correct heading levels.
+    - Channel tabs render the page inside the active tab panel, so `aria-controls` resolves.
+    - The planner slider thumbs are named ("TikTok budget"). `components/planner/budget-slider.tsx` composes the Radix primitive with shadcn's styling, because the shadcn wrapper can't label the thumb. The unused `ui/slider.tsx` is removed.
+    - Light-mode `--success` darkened from 4.38:1 to over 4.5:1 for delta text.
+  - **Layout:** `SidebarInset` gets `min-w-0`, so wide tables scroll inside their cards instead of widening the page.
+- **Verification:**
+  - **axe-core** (installed in the scratchpad, not the project), WCAG 2 A/AA + best practice, on 8 views × 2 themes. The first run found 6 rule types (chart labels, contrast, empty header, heading order, landmarks, tab `aria-controls`, unnamed slider thumbs); after fixes, **zero violations**.
+  - **Headless Chrome, 24/24 checks:**
+    - first-load skeleton; no skeleton on later navigation
+    - empty states on all five pages and recovery
+    - three new CSV files (headers and row counts)
+    - planner table sort
+    - ⌘K / Ctrl+K: channel with filters kept, campaign drawer, date range, optimize, theme
+    - keyboard only: skip link, Tab to a row with a visible ring, Space and Enter open, Escape closes, slider arrows
+    - zero console errors
+  - **Layout sweep:** every page + drawer at 1920×1080 and 1280×720, both themes. No horizontal overflow, no console problems.
+  - 78 unit tests (2 new for coverage). `data:check` passes.
+- **Iterations / corrections:**
+  - **Palette crash:** opening the palette crashed ("reading 'subscribe'"). The current shadcn `CommandDialog` no longer wraps children in the `<Command>` root, so the items have to be wrapped explicitly. The a11y sweep had missed it because the palette was closed; the interaction check caught it.
+  - **Stale browser:** a crashed check left its headless Chrome running, so the rerun reconnected to stale code. Those two instances were stopped by port, and the scripts now kill Chrome on exit.
+  - **Overflow:** the Channels page at 1280 overflowed by 20 px once its content moved into the tab panel. The root cause was the inset's `min-width: auto`.
+  - **Test script:** the screenshot loop was run under zsh, which doesn't word-split variables, so it got no paths. Rerun with bash.
+- **Screenshots:** screenshots/m9-palette.png, screenshots/m9-empty.png, screenshots/m9-skeleton.png

@@ -20,7 +20,7 @@ export function sortRows<T, K extends string>(rows: readonly T[], sort: SortStat
 }
 
 /** Clicking the active column flips it; a new column starts descending (biggest first), text ascending. */
-export function nextSort<K extends string>(current: SortState<K>, key: K, textKey = false): SortState<K> {
-  if (current.key === key) return { key, direction: current.direction === 'asc' ? 'desc' : 'asc' }
+export function nextSort<K extends string>(current: SortState<K> | null, key: K, textKey = false): SortState<K> {
+  if (current?.key === key) return { key, direction: current.direction === 'asc' ? 'desc' : 'asc' }
   return { key, direction: textKey ? 'asc' : 'desc' }
 }

@@ -1,15 +1,16 @@
-import { Sparkline } from '@/components/charts/sparkline'
 import { ChannelBadge } from '@/components/channel-badge'
+import { Sparkline } from '@/components/charts/sparkline'
 import { PacingBar } from '@/components/pacing-bar'
 import { SortableHead } from '@/components/sortable-head'
 import { StatusBadge } from '@/components/status-badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useMediaQuery, WIDE_SCREEN } from '@/hooks/use-media-query'
 import type { CampaignRow } from '@/lib/campaigns'
 import { SERIES_COLORS } from '@/lib/channels'
 import { formatCurrency, formatMultiplier, formatUnitCost } from '@/lib/format'
+import { rowAction } from '@/lib/row-action'
 import type { SortState } from '@/lib/sort'
 import type { CampaignColumn } from './use-sorted-campaigns'
-import { useMediaQuery, WIDE_SCREEN } from '@/hooks/use-media-query'
 
 interface CampaignTableProps {
   rows: readonly CampaignRow[]
@@ -43,11 +44,8 @@ export function CampaignTable({ rows, sort, onSort, onOpen, showChannel = true }
         {rows.map((row) => (
           <TableRow
             key={row.id}
-            tabIndex={0}
-            className="cursor-pointer"
             data-campaign={row.id}
-            onClick={() => onOpen(row.id)}
-            onKeyDown={(event) => event.key === 'Enter' && onOpen(row.id)}
+            {...rowAction(() => onOpen(row.id))}
           >
             <TableCell className="font-mono text-[13px] font-medium">{row.name}</TableCell>
             {channelColumn && (

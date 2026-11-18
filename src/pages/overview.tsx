@@ -1,3 +1,4 @@
+import { NoDataState } from '@/components/no-data-state'
 import { KpiGrid } from '@/components/kpi-grid'
 import { ChannelTable } from '@/components/overview/channel-table'
 import { InsightsPreview } from '@/components/overview/insights-preview'
@@ -8,7 +9,8 @@ import { useFilteredData } from '@/store/use-filtered-data'
 const OVERVIEW_KPIS = ['spend', 'revenue', 'roas', 'orders', 'cpa', 'newCustomers'] as const
 
 export function OverviewPage() {
-  const { facts, previousFacts } = useFilteredData()
+  const { facts, previousFacts, filters, range } = useFilteredData()
+  if (facts.length === 0) return <NoDataState channels={filters.channels} range={range} />
 
   return (
     <div className="flex flex-col gap-6">

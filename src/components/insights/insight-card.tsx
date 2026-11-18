@@ -22,7 +22,7 @@ export function InsightCard({ insight, compact = false }: { insight: Insight; co
             <SeverityBadge severity={insight.severity} />
             <span className="text-xs text-muted-foreground">{typeLabel(insight.type)}</span>
           </div>
-          <h3 className={cn('font-semibold tracking-tight', compact ? 'text-sm' : 'text-base')}>{insight.title}</h3>
+          <h2 className={cn('font-semibold tracking-tight', compact ? 'text-sm' : 'text-base')}>{insight.title}</h2>
           <p className={cn('text-muted-foreground', compact ? 'line-clamp-2 text-sm' : 'text-sm leading-relaxed')}>{insight.body}</p>
           <Button variant="ghost" size="sm" className="-ml-2 justify-self-start" asChild>
             <Link to={insightHref(insight.link, filters)}>
