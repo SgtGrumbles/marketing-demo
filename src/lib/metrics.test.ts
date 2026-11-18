@@ -24,6 +24,15 @@ describe('ratios', () => {
     }
   })
 
+  it('treat cost-per metrics as undefined without spend', () => {
+    const organic = day({ clicks: 500, impressions: 20_000, sessions: 480, orders: 12, revenue: 1000, newCustomers: 5 })
+    expect(cpa(organic)).toBeNull()
+    expect(cpc(organic)).toBeNull()
+    expect(cpm(organic)).toBeNull()
+    expect(METRICS.cac.compute(organic)).toBeNull()
+    expect(roas(organic)).toBeNull()
+  })
+
   it('are computed from sums, not averaged daily ratios', () => {
     const days = [day({ clicks: 1, impressions: 10 }), day({ clicks: 99, impressions: 9_990 })]
     // Averaging daily CTRs would give (10% + ~1%) / 2 ≈ 5.5%; the true CTR is 100 / 10,000.

@@ -28,10 +28,10 @@ Work one milestone at a time. Every milestone ends with typecheck and build pass
 **Done when:** changing filters updates a temporary debug panel with correct totals.
 
 ## M3 — Overview page
-- [ ] KPI tiles with deltas and sparklines
-- [ ] Spend vs. revenue chart with granularity toggle and compare overlay
-- [ ] Channel table and spend mix
-- [ ] Insights preview (placeholder until M6)
+- [x] KPI tiles with deltas and sparklines
+- [x] Spend vs. revenue chart with granularity toggle and compare overlay
+- [x] Channel table and spend mix
+- [x] Insights preview (placeholder until M6)
 
 **Done when:** it matches SCREENS.md §1 and the numbers reconcile with data:check for the same range.
 

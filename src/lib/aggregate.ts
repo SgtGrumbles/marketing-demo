@@ -1,4 +1,4 @@
-import { eachDayOfInterval, parseISO, startOfWeek } from 'date-fns'
+import { eachDayOfInterval, parseISO } from 'date-fns'
 import { toISODate } from '@/data/calendar'
 import type { ChannelKey, DailyFact } from '@/data/types'
 import type { DateRange } from '@/lib/date-range'
@@ -39,27 +39,41 @@ export function totalsByCampaign(facts: readonly DailyFact[]): Map<string, Total
 }
 
 export interface SeriesPoint extends Totals {
-  /** The day, or the first day of the week (Monday) for weekly series. */
+  /** The day, or the first day of a weekly bucket. */
   date: string
+  /** Days covered: 1 for daily points, up to 7 for weekly buckets. */
+  days: number
 }
+
+export type Granularity = 'daily' | 'weekly'
 
 /** One point per day in the range, with zeros for days without data. */
 export function dailySeries(facts: readonly DailyFact[], range: Pick<DateRange, 'from' | 'to'>): SeriesPoint[] {
   const byDate = groupTotals(facts, (f) => f.date)
   return eachDayOfInterval({ start: parseISO(range.from), end: parseISO(range.to) }).map((day) => {
     const date = toISODate(day)
-    return { date, ...(byDate.get(date) ?? emptyTotals()) }
+    return { date, days: 1, ...(byDate.get(date) ?? emptyTotals()) }
   })
 }
 
-/** Monday-start weeks. The first and last weeks may be partial when the range doesn't align. */
+/**
+ * 7-day buckets counted back from the range's last day, so the latest point is always a full week
+ * and a previous period of the same length buckets identically. Only the oldest bucket can be short.
+ */
 export function weeklySeries(facts: readonly DailyFact[], range: Pick<DateRange, 'from' | 'to'>): SeriesPoint[] {
-  const weeks = new Map<string, SeriesPoint>()
-  for (const day of dailySeries(facts, range)) {
-    const week = toISODate(startOfWeek(parseISO(day.date), { weekStartsOn: 1 }))
-    const point = weeks.get(week)
-    if (point) addInto(point, day)
-    else weeks.set(week, { ...day, date: week })
+  const days = dailySeries(facts, range)
+  const buckets: SeriesPoint[] = []
+  for (let end = days.length; end > 0; end -= 7) {
+    const chunk = days.slice(Math.max(0, end - 7), end)
+    const [first] = chunk
+    if (!first) continue
+    const bucket: SeriesPoint = { ...emptyTotals(), date: first.date, days: chunk.length }
+    for (const day of chunk) addInto(bucket, day)
+    buckets.unshift(bucket)
   }
-  return [...weeks.values()]
+  return buckets
+}
+
+export function series(facts: readonly DailyFact[], range: Pick<DateRange, 'from' | 'to'>, granularity: Granularity): SeriesPoint[] {
+  return granularity === 'daily' ? dailySeries(facts, range) : weeklySeries(facts, range)
 }

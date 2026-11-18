@@ -42,3 +42,12 @@ export function channelColor(key: ChannelKey): string {
 export function channelLabel(key: ChannelKey): string {
   return CHANNELS[key].label
 }
+
+/**
+ * Colors for series that aren't channels. Revenue wears the accent; spend stays neutral, as its
+ * deltas do. Previous-period lines reuse the same color, dashed and faded.
+ */
+export const SERIES_COLORS = {
+  revenue: 'var(--primary)',
+  spend: 'var(--series-neutral)',
+} as const

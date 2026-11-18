@@ -105,3 +105,23 @@ After each milestone, Claude Code appends an entry using the template below, wit
   - The screenshot showed the presets and calendar stacked, because shadcn's popover defaults to a column layout; switched it to a row.
   - The build warns that the JS bundle (592 kB, 187 kB gzipped) is over Vite's 500 kB advisory. Left as is for now; route-level code splitting is planned for M9.
 - **Screenshot:** screenshots/m2.png
+
+### M3 — Overview page
+- **Start / end:** 2026-11-17 22:43 – 22:50 MST (about 7 min)
+- **Prompt(s):** "proceed with m3"
+- **What was built:**
+  - **KPI row:** Spend, Revenue, ROAS, Orders, CPA, New Customers. Each tile has a compact value, a delta arrow and % colored by the metric's good direction (spend stays gray), a tooltip naming the comparison period, and a sparkline with its own tooltip. Deltas hide when compare is off, and read "No full prior period" when the previous period starts before the data (e.g. YTD).
+  - **Spend vs. revenue chart:** revenue area (accent) and spend line (neutral gray, matching its neutral delta), with a daily/weekly toggle (daily by default up to 90 days). When compare is on, the previous period appears as dashed, faded lines aligned point for point. The tooltip lists all four series and the matching previous date.
+  - **Channel table:** swatch, spend, revenue, ROAS, CPA, CVR and a share-of-spend bar, with a total row. Every column sorts (missing values always last). Rows open `/channels/:channel` with the filters kept, by click or Enter.
+  - **Spend mix:** horizontal bars in channel colors with % labels and a tooltip showing share of spend vs. share of revenue. Channels without spend are listed underneath.
+  - **Insights preview:** placeholder card with a working "View all" link until M6.
+  - Supporting code: `lib/summaries.ts` (view-models so components never compute ratios), `lib/sort.ts`, `SortableHead`, `KpiCard`, `Sparkline`, and a shared `TooltipCard`/`LegendItem` with value-first rows keyed by a line in the series color. Spend and revenue colors are `SERIES_COLORS` in `lib/channels.ts`. Removed the M2 debug panel.
+- **Verification:** headless Chrome at 1280×720 and 1920×1080 in both themes, with tooltips hovered, sorting, a row click to `/channels/tiktok`, compare off, weekly mode, YTD and organic-only views. Zero console errors. KPIs and the table total match data:check for the last 30 days: $669,707 spend, $2,803,422 revenue, 32,836 orders, $20.40 CPA, 4.2x ROAS. The Nov 26 tracking-outage dip is visible in the trend chart.
+- **Files changed:** `src/components/{overview/*,charts/*,kpi-card,sortable-head}.tsx`, `src/lib/{summaries,sort}.ts`, `src/lib/{aggregate,metrics,format,channels}.ts` with tests, `src/pages/overview.tsx`, `src/index.css` (`--series-neutral`), shadcn chart/badge/toggle-group (adds recharts).
+- **Iterations / corrections:**
+  - **1280×720 layout:** "vs prior" wrapped in the KPI tiles and the channel table was cramped. "vs prior" now shows from 1536px up (the tooltip still names the period), and the table and spend mix stack below 1536px.
+  - **Zero spend:** Organic CPA showed "$0.00". Cost-per metrics (CPC, CPM, CPA, CAC) are now undefined, shown as "—", when spend is zero; there's a test for it.
+  - **Weekly buckets:** calendar weeks clipped at both ends of the range made the latest week look like a revenue collapse. Weekly points are now 7-day buckets counted back from the range's last day, so the newest is always complete and the previous period buckets identically. Only the oldest can be short, and its tooltip shows the exact span.
+  - Moved `tooltipDatum` to its own file for the fast-refresh lint rule, and replaced a `Granularity` cast with a type guard.
+- **What went wrong and how it was fixed:** My first browser-test check for "dashed comparison lines" counted `stroke-dasharray`, which Recharts also sets while animating, so it was meaningless. Verified from screenshots instead.
+- **Screenshot:** screenshots/m3.png, screenshots/m3-dark.png

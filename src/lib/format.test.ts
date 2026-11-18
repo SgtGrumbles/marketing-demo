@@ -6,6 +6,7 @@ import {
   formatDateAxis,
   formatDateRange,
   formatDateTooltip,
+  formatPeriod,
   formatDelta,
   formatMultiplier,
   formatPercent,
@@ -45,6 +46,8 @@ describe('format', () => {
     expect(formatDateRange('2025-11-05', '2025-12-04')).toBe('Nov 5 – Dec 4, 2025')
     expect(formatDateRange('2024-12-28', '2025-01-03')).toBe('Dec 28, 2024 – Jan 3, 2025')
     expect(formatDateRange('2025-12-04', '2025-12-04')).toBe('Dec 4, 2025')
+    expect(formatPeriod('2025-11-28', 7)).toBe('Nov 28 – Dec 4, 2025')
+    expect(formatPeriod('2025-11-28', 1)).toBe('Nov 28, 2025')
   })
 
   it('missing and divide-by-zero values show a dash', () => {

@@ -1,4 +1,4 @@
-import { format, parseISO } from 'date-fns'
+import { addDays, format, parseISO } from 'date-fns'
 
 // All displayed numbers and dates go through this module.
 
@@ -98,6 +98,11 @@ export function formatDateRange(from: string | Date, to: string | Date): string 
   if (start.getTime() === end.getTime()) return formatDateTooltip(end)
   const sameYear = start.getFullYear() === end.getFullYear()
   return `${sameYear ? formatDateAxis(start) : formatDateTooltip(start)} – ${formatDateTooltip(end)}`
+}
+
+/** A series point's span: "Nov 17, 2026" for a day, "Nov 28 – Dec 4, 2025" for a bucket of days. */
+export function formatPeriod(start: string, days: number): string {
+  return days <= 1 ? formatDateTooltip(start) : formatDateRange(start, addDays(toDate(start), days - 1))
 }
 
 /** "just now", "4 min ago", "2 hr ago" */

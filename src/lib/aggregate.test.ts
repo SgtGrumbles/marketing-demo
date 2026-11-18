@@ -33,9 +33,11 @@ describe('aggregation', () => {
     expect(sumTotals(daily).spend).toBeCloseTo(total.spend, 2)
   })
 
-  it('weekly series starts weeks on Monday and sums to the total', () => {
+  it('weekly buckets end on the last day, are full except the oldest, and sum to the total', () => {
     const weekly = weeklySeries(facts, range)
-    expect(weekly.slice(1).every((w) => new Date(`${w.date}T00:00`).getDay() === 1)).toBe(true)
+    expect(weekly.at(-1)?.date).toBe('2025-11-28')
+    expect(weekly.slice(1).every((w) => w.days === 7)).toBe(true)
+    expect(weekly.reduce((n, w) => n + w.days, 0)).toBe(range.days)
     expect(sumTotals(weekly).clicks).toBe(total.clicks)
   })
 

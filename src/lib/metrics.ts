@@ -35,13 +35,16 @@ export function ratio(numerator: number, denominator: number): number | null {
 }
 
 export const ctr = (t: Pick<Totals, 'clicks' | 'impressions'>) => ratio(t.clicks, t.impressions)
-export const cpc = (t: Pick<Totals, 'spend' | 'clicks'>) => ratio(t.spend, t.clicks)
-export const cpm = (t: Pick<Totals, 'spend' | 'impressions'>) => ratio(t.spend * 1000, t.impressions)
+/** Cost-per metrics are undefined when nothing was spent (e.g. organic): "—", not "$0.00". */
+const costPer = (spend: number, units: number) => (spend === 0 ? null : ratio(spend, units))
+
+export const cpc = (t: Pick<Totals, 'spend' | 'clicks'>) => costPer(t.spend, t.clicks)
+export const cpm = (t: Pick<Totals, 'spend' | 'impressions'>) => costPer(t.spend * 1000, t.impressions)
 export const cvr = (t: Pick<Totals, 'orders' | 'sessions'>) => ratio(t.orders, t.sessions)
-export const cpa = (t: Pick<Totals, 'spend' | 'orders'>) => ratio(t.spend, t.orders)
+export const cpa = (t: Pick<Totals, 'spend' | 'orders'>) => costPer(t.spend, t.orders)
 export const roas = (t: Pick<Totals, 'revenue' | 'spend'>) => ratio(t.revenue, t.spend)
 export const aov = (t: Pick<Totals, 'revenue' | 'orders'>) => ratio(t.revenue, t.orders)
-export const cac = (t: Pick<Totals, 'spend' | 'newCustomers'>) => ratio(t.spend, t.newCustomers)
+export const cac = (t: Pick<Totals, 'spend' | 'newCustomers'>) => costPer(t.spend, t.newCustomers)
 /** Marketing efficiency ratio: pass totals across all channels, including unpaid ones. */
 export const mer = (allChannels: Pick<Totals, 'revenue' | 'spend'>) => ratio(allChannels.revenue, allChannels.spend)
 
