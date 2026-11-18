@@ -14,21 +14,25 @@ const PlannerPage = lazyPage(() => import('@/pages/planner'), (m) => m.PlannerPa
 const InsightsPage = lazyPage(() => import('@/pages/insights'), (m) => m.InsightsPage)
 const SourcesPage = lazyPage(() => import('@/pages/sources'), (m) => m.SourcesPage)
 
-const router = createBrowserRouter([
-  {
-    element: <AppLayout />,
-    children: [
-      { index: true, element: <OverviewPage /> },
-      { path: 'channels/:channel?', element: <ChannelsPage /> },
-      { path: 'campaigns', element: <CampaignsPage /> },
-      { path: 'funnel', element: <FunnelPage /> },
-      { path: 'planner', element: <PlannerPage /> },
-      { path: 'insights', element: <InsightsPage /> },
-      { path: 'sources', element: <SourcesPage /> },
-      { path: '*', element: <Navigate to="/" replace /> },
-    ],
-  },
-])
+const router = createBrowserRouter(
+  [
+    {
+      element: <AppLayout />,
+      children: [
+        { index: true, element: <OverviewPage /> },
+        { path: 'channels/:channel?', element: <ChannelsPage /> },
+        { path: 'campaigns', element: <CampaignsPage /> },
+        { path: 'funnel', element: <FunnelPage /> },
+        { path: 'planner', element: <PlannerPage /> },
+        { path: 'insights', element: <InsightsPage /> },
+        { path: 'sources', element: <SourcesPage /> },
+        { path: '*', element: <Navigate to="/" replace /> },
+      ],
+    },
+  ],
+  // Matches Vite's base, so the app also works under a path prefix like /marketing-demo/.
+  { basename: import.meta.env.BASE_URL },
+)
 
 export function App() {
   return (
