@@ -62,9 +62,9 @@ Work one milestone at a time. Every milestone ends with typecheck and build pass
 **Done when:** Optimize moves budget toward TikTok and away from Meta, and the projected totals update live.
 
 ## M8 — Data Sources (simulated)
-- [ ] Source cards
-- [ ] Connect modal → progress → connected
-- [ ] Sync now
+- [x] Source cards
+- [x] Connect modal → progress → connected
+- [x] Sync now
 
 ## M9 — Polish
 - [ ] Skeletons, empty states, transitions

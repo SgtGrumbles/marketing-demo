@@ -255,3 +255,29 @@ After each milestone, Claude Code appends an entry using the template below, wit
   - The first browser run reloaded the page to test persistence (in-memory state is meant to reset on reload). It now navigates in-app.
   - Recharts' automatic axis ticks ended on odd values ($600K, $790K crowding); switched to round-number ticks.
 - **Screenshots:** screenshots/m7.png (optimized plan with curve tooltip), screenshots/m7-dark.png
+
+### M8 — Data Sources (simulated)
+- **Start / end:** 2026-11-18 11:31 – 11:35 MST (about 5 min)
+- **Prompt(s):** "proceed with m8"
+- **What was built:**
+  - **`lib/sources.ts`:** the seven sources from DATA.md, each with a generic lucide icon (no logos or brand colors), what it feeds, its channels, consent-screen permissions and fictional accounts built from `COMPANY`. `sourceVolumes` counts each source's daily rows from the dataset (GA4 and Shopify feed every row).
+  - **Five connected, two not:** Klaviyo and the Affiliate network start disconnected, the smallest sources and the least prominent in the storylines.
+  - **`store/sources.ts`:** per-source connected / last-synced / syncing state, relative to page load. It survives page changes but not a reload.
+  - **Header sync status:** now reads that store. It shows the latest sync, spins while syncing, and the tooltip says "N of 7 sources connected". The shared `useNow` hook replaces its own timer.
+  - **Source cards:** icon, name, feeds (with channel swatches), a status badge (icon + label: Connected / Syncing / Not connected), last sync, rows and history. Disconnected cards are dashed and show "—".
+  - **Sync now:** a spinner for 1.6 s, then "just now".
+  - **Connect dialog:**
+    1. Pick an account (radio cards).
+    2. Review the permissions, with a read-only note.
+    3. Progress bar with stage text ("Authorizing…", "Fetching 18 months of history…", "Building daily tables…") and a live row counter, over 3.6 s.
+    4. A success screen.
+    - The card flips to Connected when the import finishes. Cancel or Escape mid-import leaves it disconnected, and each opening starts fresh.
+  - A chip on the page says the connections are simulated. The top-bar filters stay hidden here, from M7's `usesFilters`.
+  - shadcn `Dialog`, `Progress` and `RadioGroup` added. They use the existing `radix-ui` package, so no new dependency.
+- **Verification:**
+  - 3 new unit tests (76 total): five/two split, row counts reconcile with the dataset, stable accounts.
+  - Headless Chrome, 18/18 checks: card states, header "4 min ago" then "Syncing…" then "just now", each connect step with the chosen account carried through, cancel mid-import, reopen fresh, card flip and summary 6 of 7, Escape, state surviving navigation with the URL kept, no overflow at 1280. Both themes at 1920 and 1280, zero console errors.
+- **Iterations / corrections:**
+  - The progress bar trailed its percentage (44% label, about 32% fill), because the indicator's CSS transition restarted every frame. Turned it off from the call site (the shadcn file is unedited).
+  - An effect event keeps a parent re-render mid-import from restarting the progress.
+- **Screenshots:** screenshots/m8.png, screenshots/m8-connect.png
