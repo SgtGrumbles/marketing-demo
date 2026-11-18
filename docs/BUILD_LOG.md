@@ -79,3 +79,29 @@ After each milestone, Claude Code appends an entry using the template below, wit
   - Row count is about 6.8k rather than DATA.md's estimate of 13–14k, because campaigns start and stop rather than all running 540 days. Not tuned upward, since it doesn't affect anything on screen.
   - Budgets are derived so that month-to-date pacing lands near plan (and at 115% for the over-budget campaign). That's why December budgets include holiday-level spend.
 - **Screenshot:** none (no UI changes; data:check output is the evidence)
+
+### M2 — Filters and state
+- **Start / end:** 2026-11-17 22:19 – 22:26 MST (about 7 min)
+- **Prompt(s):** "is there anything I can see yet, in a browser for example?" (answered: shell only until M2/M3), then "proceed with m2"
+- **What was built:**
+  - Zustand filter store (`src/store/filters.ts`): date preset or custom range, compare toggle and channels. It reads the URL synchronously at startup, so shared links render correctly on the first paint.
+  - Two-way URL sync (`useFilterUrlSync`). Defaults are left out of the URL, unrelated params are kept, and the URL is replaced rather than pushed so history stays clean. Sidebar links carry the current filters.
+  - `lib/date-range.ts`: the 7/30/90-day, QTD, YTD and custom presets, clamped to the data. The previous period is the equal-length span immediately before, and it's flagged when it starts before the data does (e.g. YTD).
+  - `lib/filter-params.ts`: parse and serialize, with invalid values falling back to defaults.
+  - `lib/aggregate.ts`: filter facts, then group by channel, campaign, day (zero-filled) or Monday-start week.
+  - `useFilteredData()`: one memoized computation per filter change, shared by every component.
+  - Top-bar controls: a date range picker (presets plus a two-month calendar limited to the data's dates), a channel multi-select (color swatches, at least one channel always selected, "Paid media only" shortcut) and the compare switch. "Last synced" collapses to the dot with a tooltip below 1536px wide.
+  - Temporary debug panel on Overview: range, previous period, row counts, a check that the daily and weekly series reconcile, a totals table with deltas, and a by-channel table.
+  - `data:check -- --from --to` prints totals by channel for any range, to reconcile with the UI.
+  - 16 new unit tests (40 total).
+- **Verification:** a headless-Chrome test with real mouse events covered the default view, presets, channel toggles, the compare switch, sidebar navigation keeping filters, the back button, a deep link with a custom range and channels, picking a custom range in the calendar, YTD's partial previous period, and invalid params. 10/10 steps pass with zero console errors. Panel totals match data:check exactly: last 30 days $669,707 spend / $2,803,422 revenue / 32,836 orders; Oct 2025 Meta + TikTok spend $229,691.
+- **Files changed:** `src/store/*`, `src/lib/{date-range,filter-params,aggregate}.ts` with tests, `src/lib/format.ts` (`formatDateRange`), `src/components/filters/*`, `src/components/{channel-swatch,debug-panel,app-layout,app-sidebar,sync-status}.tsx`, `src/pages/overview.tsx`, `scripts/data-check.ts`, shadcn popover/calendar/switch/card/table/label, `package.json` (zustand; react-day-picker comes with shadcn's calendar).
+- **Iterations / corrections:**
+  - The store → URL effect reads the store directly rather than the render value, so a back/forward navigation isn't overwritten by stale filters.
+  - Replaced a render-time module cache, which oxlint flagged, with a reselect-style `memoizeLast`.
+  - Replaced an `as` cast with a typed `QUICK_PRESETS` list.
+- **What went wrong and how it was fixed:**
+  - The browser test caught the calendar's first click editing the existing range (Nov 5 → Nov 10 → Nov 16 became Nov 5–16). The first click after opening now starts a new range.
+  - The screenshot showed the presets and calendar stacked, because shadcn's popover defaults to a column layout; switched it to a row.
+  - The build warns that the JS bundle (592 kB, 187 kB gzipped) is over Vite's 500 kB advisory. Left as is for now; route-level code splitting is planned for M9.
+- **Screenshot:** screenshots/m2.png

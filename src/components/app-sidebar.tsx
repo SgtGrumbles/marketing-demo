@@ -11,10 +11,13 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import { filterSearch } from '@/lib/filter-params'
 import { NAV_ITEMS, isNavItemActive } from '@/lib/routes'
+import { useFilterStore } from '@/store/filters'
 
 export function AppSidebar() {
   const { pathname } = useLocation()
+  const search = filterSearch(useFilterStore((state) => state.filters))
 
   return (
     <Sidebar collapsible="icon">
@@ -22,7 +25,7 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild tooltip="Pulse">
-              <NavLink to="/">
+              <NavLink to={{ pathname: '/', search }}>
                 <span className="flex aspect-square size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
                   <Activity className="size-4" />
                 </span>
@@ -39,7 +42,7 @@ export function AppSidebar() {
               {NAV_ITEMS.map((item) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton asChild isActive={isNavItemActive(item, pathname)} tooltip={item.title}>
-                    <NavLink to={item.path}>
+                    <NavLink to={{ pathname: item.path, search }}>
                       <item.icon />
                       <span>{item.title}</span>
                     </NavLink>

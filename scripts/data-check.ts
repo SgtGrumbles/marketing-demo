@@ -1,4 +1,5 @@
 // npm run data:check — prints totals and verifies the generator against docs/DATA.md.
+// npm run data:check -- --from 2025-11-05 --to 2025-12-04 also prints totals for that range.
 import { format, getDaysInMonth, parseISO, subDays } from 'date-fns'
 import { blackFriday, toISODate } from '@/data/calendar'
 import { STORYLINES } from '@/data/config'
@@ -57,6 +58,28 @@ console.table(
     return { month, spend: formatCurrencyCompact(t.spend), revenue: formatCurrencyCompact(t.revenue), MER: formatMultiplier(mer(t)), orders: formatCount(t.orders) }
   }),
 )
+
+// --- optional range, for reconciling with the UI ----------------------------------------------
+const argument = (name: string) => {
+  const index = process.argv.indexOf(`--${name}`)
+  return index >= 0 ? process.argv[index + 1] : undefined
+}
+const rangeFrom = argument('from')
+const rangeTo = argument('to')
+if (rangeFrom && rangeTo) {
+  const inRange = between(rangeFrom, rangeTo)
+  console.log(`\nRange ${rangeFrom} → ${rangeTo} by channel`)
+  console.table(
+    [...CHANNEL_LIST.map(({ key, label }) => ({ label, t: totals(inRange, onChannel(key)) })), { label: 'Total', t: totals(inRange) }].map(({ label, t }) => ({
+      channel: label,
+      spend: formatCurrency(t.spend),
+      revenue: formatCurrency(t.revenue),
+      ROAS: formatMultiplier(roas(t)),
+      orders: formatCount(t.orders),
+      CPA: formatUnitCost(cpa(t)),
+    })),
+  )
+}
 
 // --- checks ------------------------------------------------------------------------------------
 const checks: { name: string; pass: boolean; detail: string }[] = []

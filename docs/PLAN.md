@@ -21,9 +21,9 @@ Work one milestone at a time. Every milestone ends with typecheck and build pass
 **Done when:** data:check passes, totals look plausible, and generation takes under 200 ms.
 
 ## M2 — Filters and state
-- [ ] Zustand store: date range, compare toggle, channels
-- [ ] Two-way sync with the URL query string
-- [ ] Selectors: filter facts; aggregate by day, week, channel and campaign; compute the matching previous period
+- [x] Zustand store: date range, compare toggle, channels
+- [x] Two-way sync with the URL query string
+- [x] Selectors: filter facts; aggregate by day, week, channel and campaign; compute the matching previous period
 
 **Done when:** changing filters updates a temporary debug panel with correct totals.
 

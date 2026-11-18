@@ -4,6 +4,7 @@ import {
   formatCurrency,
   formatCurrencyCompact,
   formatDateAxis,
+  formatDateRange,
   formatDateTooltip,
   formatDelta,
   formatMultiplier,
@@ -41,6 +42,9 @@ describe('format', () => {
   it('dates', () => {
     expect(formatDateAxis('2026-11-17')).toBe('Nov 17')
     expect(formatDateTooltip('2026-11-17')).toBe('Nov 17, 2026')
+    expect(formatDateRange('2025-11-05', '2025-12-04')).toBe('Nov 5 – Dec 4, 2025')
+    expect(formatDateRange('2024-12-28', '2025-01-03')).toBe('Dec 28, 2024 – Jan 3, 2025')
+    expect(formatDateRange('2025-12-04', '2025-12-04')).toBe('Dec 4, 2025')
   })
 
   it('missing and divide-by-zero values show a dash', () => {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { formatTimeAgo } from '@/lib/format'
 
 // Simulated: the "last sync" happened four minutes before the page loaded.
@@ -12,13 +13,20 @@ export function SyncStatus() {
     return () => window.clearInterval(id)
   }, [])
 
+  const label = `Last synced ${formatTimeAgo(LAST_SYNCED, now)}`
+
   return (
-    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-      <span className="relative flex size-2">
-        <span className="absolute inline-flex size-full animate-ping rounded-full bg-success opacity-60 motion-reduce:animate-none" />
-        <span className="relative inline-flex size-2 rounded-full bg-success" />
-      </span>
-      <span>Last synced {formatTimeAgo(LAST_SYNCED, now)}</span>
-    </div>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className="flex items-center gap-2 text-sm whitespace-nowrap text-muted-foreground">
+          <span className="relative flex size-2">
+            <span className="absolute inline-flex size-full animate-ping rounded-full bg-success opacity-60 motion-reduce:animate-none" />
+            <span className="relative inline-flex size-2 rounded-full bg-success" />
+          </span>
+          <span className="hidden 2xl:inline">{label}</span>
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>{label} · all sources healthy</TooltipContent>
+    </Tooltip>
   )
 }

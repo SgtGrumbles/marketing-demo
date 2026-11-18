@@ -91,6 +91,15 @@ export function formatDateTooltip(date: string | Date): string {
   return format(toDate(date), 'MMM d, yyyy')
 }
 
+/** Nov 5 – Dec 4, 2025 · Dec 28, 2024 – Jan 3, 2025 · Dec 4, 2025 */
+export function formatDateRange(from: string | Date, to: string | Date): string {
+  const start = toDate(from)
+  const end = toDate(to)
+  if (start.getTime() === end.getTime()) return formatDateTooltip(end)
+  const sameYear = start.getFullYear() === end.getFullYear()
+  return `${sameYear ? formatDateAxis(start) : formatDateTooltip(start)} – ${formatDateTooltip(end)}`
+}
+
 /** "just now", "4 min ago", "2 hr ago" */
 export function formatTimeAgo(from: Date, now: Date = new Date()): string {
   const minutes = Math.floor((now.getTime() - from.getTime()) / 60_000)
